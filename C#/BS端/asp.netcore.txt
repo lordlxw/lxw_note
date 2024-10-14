@@ -1,0 +1,244 @@
+DI（Dependency Inject）+IOC（Inversion Of Control）
+依赖倒置原则：
+1、上层模块不应该依赖底层模块，它们都应依赖于抽象
+2、抽象不应该依赖于细节，细节应该依赖于抽象。
+
+大白话——利用接口抽象性解耦，面向接口编程，不用new对象了
+asp.netcore 内置了这种容器
+IPerson person = Factory.CreateStudent();
+
+
+Asp.Net Core其实有三大部分：
+Asp.Net Core、Asp.Net Core MVC、Asp.Net Core Identity
+
+优势：
+.net只能运行在Windows环境，而Core可以多环境下运行
+.net只能托管在IIS，而Core可以托管在IIS、Apache、Docker
+什么是托管？
+用.net编写的程序称为托管应用程序，因为他们依赖于运行时（Runtime）和Framework
+VB、C++等不依赖于CLR，是非托管代码
+
+
+
+MVC —— 编程模型 
+都继承同一个积累，返回IActionResult（里面有2种类型，ViewResult和JsonResult）
+asp.new web api控制器类返回JSONResult
+mvc web 控制器类返回JsonResult
+ 
+web application用到的razor，以页面为中心
+
+在ASPnetcore中，文件or文件夹不再包含在项目文件中
+文件系统决定文件和文件夹属于哪个项目——加一个文件就出现了，优化了
+文件夹系统和项目文件现在是绑定了，同步，加就加，删就删
+
+project文件
+<AspNetCoreHostingModel>——决定托管应用程序（InProcess/OutOfProcess）
+InProcess——表示app在IIS进程内托管（w3wp.exe）
+OutOfProcess——Kestrel server
+Asp.NetCore默认采用外部托管
+进程内托管仅有一个Web服务器IIS请求吞吐量比进程外托管更高
+进程外托管有两个web服务器（内部和外部）内置的是Kestrel，外部的可以是IIS、Nginx OR Apache
+Kestrel是用于ASP.NetCore跨平台Web服务器从，可被用作边缘服务器？Kestrel可以直接处理客户端的请求通向Web，应用程序进程名是dotnet.exe
+也可以中间加个反向代理服务器（IIS、Apache）他们会增加额外的配置和安全层
+System.Diagnostics.Process.GetCurrentProcess().ProcessName
+
+<PackageReference>
+Metapackage(元数据引用）——Microsoft.AspNetCore.App，元数据本身没有内容，他只有一系列外部包的依赖，且不用包含版本号
+另一个引用Microsoft.AspNetCore.Razor.Design
+
+aspnetcore中的main方法
+调用CreateWebHostBuilder静态方法
+CreateDefaultBuilder做了些什么？
+设置网络服务器
+从各种配置源加载主机和应用程序配置
+配置日志
+
+
+launchingSettings.json文件——此文件只在我们本地开发机器上需要，也可以直接属性配置
+ "ASPNETCORE_ENVIRONMENT": "Development"——环境声明，表明是开发者环境
+
+而appSettings.json文件——将应用程序配置存储于此文件，可用于程序发布很重要
+可以配置的信息有：数据连接配置，环境变量 、用户秘密、命令行参数、自定义配置源
+通常采用键值对配置，IConfiguration Service提供了从不同配置源中读取信息的能力 
+public Startup(IConfiguration config)
+        {
+            _config = config;
+        }
+通过依赖注入来注入服务
+  await context.Response.WriteAsync(_config["MyKey"]); 调用MyKey的键
+appsettings.Development.json文件 优先级大于 appSettings.json 优先显示development里的内容
+***注意优先级顺序：命令行>环境变量>用户秘密>appsettings
+
+asp.netcore中间件middleware，中间件是一种可处理http请求或响应的组件。
+可以利用一个中间件来验证用户，另一个中间件来处理错误，再一个中间件来提供静态文件。
+静态文件如javascript、css，我们可以用来设置请求处理管道，管道确定了如何处理请求，管道被配置为应用程序启动的一部分
+StartUp中的Configure方法，是为asp.netcore设置请求处理管道的，里面的代码就是多个中间件。
+中间件的组合就像连起来的管道一样，一级连着一级，有传入的请求和传出的响应。当然也不是都要互相作用，有些中间件使用时需要短路（简单忽略传入的请求，避免不必要的工作）
+注意：中间件必须要按正确顺序添加
+
+项目添加wwwroot文件夹，系统会默认设置此为服务器的根目录，里面可以放静态文件。在里面写一个htmlpage页面
+wwwroot可以分类，image放一起，javascript放一起，css放一起
+要使用静态文件—— app.UseStaticFiles(); 然后http://localhost:12274/1.png
+app.UseDefaultFiles();//可以使用html文件
+Run方法，里面封装了一个RequestDelegate处理http请求
+
+Tips：使用开发人员异常界面中间件时必须插入请求处理尽可能早，以便处理异常，在管道后续中间件后出问题时及时发现问题。app.UseDeveloperExceptionPage();
+也可以自定义异常页
+
+开发环境介绍：一般三种：development、staging、Production
+launchingSettings.json日常开发用development，staging用于B2B，端到端测试，显示JS异常（缩小范围），Production环境——用于实时生产环境（安全性和性能）
+aspnetcore默认的开发环境其实是Production，当你把指定环境变量删掉时
+
+什么是MVC?MVC是如何工作的
+MVC——Model、View、Controller
+用户请求发送到Controller-》形成模型
+Controller-》View
+Model类通常包含数据库和具体实现，类+接口使用依赖注入
+View显示控制器希望展示的模型数据
+
+空如何增加MVC？
+1、首先将MVC服务添加到依赖注入容器
+   public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddMvc();
+        }
+他会帮我们自动查找控制器里的方法
+2、将MVC中间件添加到我们应用程序请求处理
+ app.UseMvcWithDefaultRoute();   //使用
+默认路由，他会自动查找主控制器里的方法。
+这个操作机制是这样的，查看主控制器里有无内容，有则执行控制器内容，无的话走到下一步（跳过）
+
+AddMVC和AddMvcCore的区别：
+addMvcCore仅添加核心MVC服务，addMvc添加所有MVC服务，且Mvc方法内部调用了MvcCore
+
+依赖注入容器里注入新服务services.AddSingleton<IEmployeeRepository,MockEmployeeRepository>();
+如果有人希望用员工存储服务，就会将Mock实例创建出来
+
+依赖注入容器的注册：
+1、AddSingleton——注册单例，通常每个应用程序只创建一个单例服务，在整个生命周期存货
+2、AddTransient——注册瞬态
+3、AddScoped——在每个请求中创建一个范围表面的新实例	
+
+什么是控制器，是Controller的派生类。当来自浏览器请求到达应用程序时，MVC设计模式中的这个控制器处理传入的Http请求和对该用户的响应。
+
+通过/来定位所要的服务
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+视图
+return View("");//页面名
+如果是二级页面则return View("newViewFolder/test.cshtml");
+总之可以输入绝对路径，不输则自动读Views文件夹里的。--重载才用绝对定位，直接输View名即可
+
+html切换至cs模式用@符号
+viewdata很少用——自我感觉就是反射编译时不会发生错误，而在运行时会发现错误viewdata[]=  键值对
+viewbag——利用他来传输数据从控制器到视图 viewbag.something=   动态属性  两者都是运行时检查
+viewbag 包含viewdata，这两个都是松类型
+
+有更好展示视图的途径，利用强类型视图。在html顶端+一条@model  命名空间.Models.模型名。‘
+这样可以编译时检查错误
+
+aspnetcore中的viewmodel：
+模型不包含视图所需的所有数据，viewmodel就可以，感觉跟WPF里概念一样。一个View对应一个ViewModel
+在控制器和视图之间传递数据
+
+.netcore布局
+通常在Views-Shared文件夹下添加razor布局页面
+@RenerSection("Scripts"可以设置页面布局——嵌入js等
+
+ViewStart作为启动文件可以包含所有视图，它减少了代码冗余并提高了可维护性。ViewStart是可分层的。
+
+
+_ViewImports文件可以导入命名空间以免滥用文件夹 @using 
+---------------------------------------------------------------------------------------------------------------------
+MVC中的路由有两种——常规路由和属性路由
+常规路由：
+app.UseMvcWithDefaultRoute();——使用默认路由
+或者app.UseMvc(routes=>{
+	routes.MapRoute("default","{controller}/{action}/{id}");
+});
+routes.MapRoute("default","{controller=home}/{action=index}/{id?}");  //代表设置了缺省值。
+id后加问号表示这个参数是可选的,不是强制的
+details映射到action，这其中的映射是由模型绑定完成的
+127.0.0.1:10000/home/details/1  ——home代表homecontroller，details代表其中的方法，1代表参数。
+
+属性路由：
+可以直接放在控制器里。
+特性——
+[Route("")]
+[Route("Home")]
+[Route("Home/Index")]
+三者可以访问同一个界面，在需要访问的方法前加此特性
+[Route("Home/details/{id}"]
+这有层级关系，先在类中定义一个，再在各方法中定义。
+还有~符号的使用
+-------------------------------------------------------------------------------------------------------
+Bootstrap:引导工具
+什么是Bootstrap呢？twitter开发的响应式开源web应用程序，如css：html and js
+是常见用户界面组件的设计模板，可以与asp java php联合使用，就是说能自适应界面，手机客户端，网页端，拉伸，放大缩小响应式应用，节省开发时间
+Libman轻量级工具——add里有，可以添加想要的库
+默认保存在wwwroot文件夹下 wwwroot/lib/twitter-bootstrap/
+可以在生成的libman.json文件夹中管理用户界面
+-------------------------------------------------------------------------------------------------------
+标签助手：TagHelper 与 HemlHelper类似
+是服务器组件，在服务器上处理以创建和呈现Html元素
+帮助生成链接，创建表单，加载assets等
+顶上添加@addTagHelper *,Microsoft.AspNetCore.Mvc.TagHelpers
+原本是通过href打开链接文件，通过tagHelper可以<a asp-controller="home" asp-action=""index"/>
+@Html.ActionLink()，帮助生成html锚元素
+
+为什么要使用tagHelper
+？
+
+1、ImageTagHelper
+图片缓存，当改变一个图片时，浏览器上不会同步是因为直接从浏览器缓存中读数据了，可以F12 禁用cache
+但要有一个两全的方法，当图片改变时，从服务器拿，没变时，直接从cache中获得。
+使用ImageTagHelper可以很好解决此类问题
+<image  src = "/images/1.jpg"==asp-append-version="true"==/>
+加了一句话，根据hash值不同判断，图像内容是否已经更改 
+
+2、EnvironmentTagHelper
+用处：从CDN加载缩小的引导CSS文件以获得更好的性能，渲染更快
+<environmeng include="Staging,Production">
+	...bootstrap中的CDN代码，其中有intergrity属性，保证其内容不被篡改（也是基于hash）
+	asp-suppress-fallback-integrity="true" 代码// 来关闭从后备源下载的文件完整性检查，假设我们信任本地服务器的文件
+</environment>
+or exlude
+
+----------------------------------------------------
+aspnetcore navigation ——导航菜单
+<nav class="nav-bar">
+</nav>
+================================
+form tag helper
+例子：<form method="post" action=.../>
+---------------------------------------------------
+路由数据优先权>查询
+模型绑定
+localhost:10000/home/details/2? id=5
+2>5
+
+redirectionresult——重定向结果，常当返回值。上面要加特性[httppost] IActionResult是任何类的基类
+必填字段——上面特性[Required]
+
+限制validation可以用正则表达式，特性是[RegularExpression()]
+或者限制长度[Maxlength(50)]
+一下是常用的正则表达式，供大家参考：
+
+验证数字：^[0-9]*$
+
+验证n位的数字：^\d{n}$ 
+
+验证至少n位数字：^\d{n,}$
+
+验证m-n位的数字：^\d{m,n}$
+
+验证零和非零开头的数字：^(0|[1-9][0-9]*)$
+
+验证有两位小数的正实数：^[0-9]+(.[0-9]{2})?$
+
+验证有1-3位小数的正实数：^[0-9]+(.[0-9]{1,3})?
+-------------------------------------------------------------
+addSingleton,addScope,addTransient三者的区别
+1、singleton——创建实例，就这一个实例存在，就一个作用域
+2、scope——多个作用域，每个等价，都是一个新服务
+3、transient——每次请求都会获得新实例，瞬态。从头开始计数
