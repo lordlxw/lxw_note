@@ -5,10 +5,30 @@
 ## 一、UI样式与主题
 
 
+### 1、ChartControl
 
-
-
-## 
+> 内置多种Command
+>
+> **图表操作命令**：
+>
+> - **添加指标命令 (`AddIndicatorCommand`)**：用于向图表中添加技术指标（如移动平均线、RSI、MACD 等）。
+> - **删除指标命令 (`RemoveIndicatorCommand`)**：用于从图表中删除已添加的指标。
+> - **切换图表类型命令**：切换图表的显示方式（如从柱状图切换到线图）。
+> - **更改图表样式命令**：改变图表的外观样式（例如，图表的颜色、字体、边框等）。
+> - **切换图表视图命令**：例如，切换图表的 2D 和 3D 视图。
+> - **图表缩放命令**：改变图表的缩放级别或调整显示的时间范围。
+>
+> **图表界面命令**：
+>
+> - **显示/隐藏图例命令 (`ShowHideLegendCommand`)**：控制是否显示图表中的图例。
+> - **显示/隐藏标题命令 (`ShowHideTitleCommand`)**：显示或隐藏图表的标题。
+> - **显示/隐藏工具提示命令**：控制是否显示图表中的工具提示（如鼠标悬停时显示的数值）。
+>
+> **交互和视图命令**：
+>
+> - **图表缩放命令 (`ZoomInCommand`, `ZoomOutCommand`)**：用于缩放图表（例如，在时间轴上放大或缩小）。
+> - **选择区域命令 (`SelectRegionCommand`)**：允许用户选择图表上的特定区域或数据点。
+> - **重置视图命令 (`ResetViewCommand`)**：将图表的视图恢复到初始状态。
 
 
 
@@ -188,3 +208,9 @@
 > #### `ObservableCollectionCore` 的作用
 >
 > `ObservableCollectionCore` 提供了对 `ObservableCollection` 的扩展，它实现了集合项的变化通知，并且在某些情况下可以优化集合更新的行为，类似于 `BeginUpdate` 和 `EndUpdate` 的效果。特别是在绑定到 UI 控件（如 `GridControl` 或 `TreeList`）时，DevExpress 会在底层使用 `ObservableCollectionCore` 来批量处理更新，从而减少 UI 的频繁重绘。
+
+
+
+### 2、Virtual
+
+>便于继承和扩展
