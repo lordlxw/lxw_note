@@ -195,6 +195,18 @@
 > | **适用数据量**          | 适合数据量较小或变化不频繁的场景。                        | 适合大数据量或频繁更新的场景，优化性能。                     |
 
 
+
+### 4、POCO
+
+> 在 DevExpress 中，`[POCOViewModel]` 特性常与 **DevExpress MVVM 框架** 结合使用，帮助简化 ViewModel 类的实现。通过使用这个特性，开发者可以构建一个 **POCO 风格** 的 ViewModel，它不需要继承任何基类，也不需要实现特定的接口。DevExpress 的 MVVM 框架会自动识别并处理这些 POCO 类中的数据绑定、命令等功能。
+>
+> 
+>
+> `MyViewModel` 类被标记为 `[POCOViewModel]`，因此它不需要继承任何基类（如 `ViewModelBase`）。
+
+
+
+
 ## 四、常用思路
 
 ### 1、BeginUpdate & EndUpdate
