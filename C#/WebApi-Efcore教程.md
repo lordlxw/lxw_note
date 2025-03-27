@@ -883,7 +883,7 @@ https://www.bilibili.com/list/watchlater?oid=734617646&bvid=BV1SD4y157nV&spm_id_
 > ### 示例：
 >
 > ```
-> csharp复制编辑public class Blog
+> public class Blog
 > {
 >     public int BlogId { get; set; }
 >     public string Url { get; set; }
@@ -1788,10 +1788,10 @@ https://www.bilibili.com/list/watchlater?oid=734617646&bvid=BV1SD4y157nV&spm_id_
 >    ```csharp
 >    using var context = new TestContext();
 >    var user = await context.Users.FirstOrDefaultAsync(u => u.Id == 1);
->    
+>        
 >    // 改变属性值
 >    user.Name = "Updated Name";
->    
+>        
 >    // 调用 SaveChanges() 会生成 UPDATE 语句
 >    await context.SaveChangesAsync();
 >    ```
@@ -1802,7 +1802,7 @@ https://www.bilibili.com/list/watchlater?oid=734617646&bvid=BV1SD4y157nV&spm_id_
 >    ```csharp
 >    using var context = new TestContext();
 >    var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == 1);
->    
+>       
 >    // 即使修改属性，SaveChanges() 不会更新数据库
 >    user.Name = "Updated Name";
 >    await context.SaveChangesAsync(); // 不会执行任何操作
@@ -1916,14 +1916,14 @@ https://www.bilibili.com/list/watchlater?oid=734617646&bvid=BV1SD4y157nV&spm_id_
 >
 >   **预加载**在 EF Core 中通常指的是 **即时加载（Eager Loading）**。
 >
->   ------
+> ------
 >
 >   ### **即时加载（Eager Loading）**
 >
 >   - **概念**：预加载（Eager Loading）是在查询时通过 `Include` 方法，将实体及其相关数据在一次查询中全部加载到内存中。
 >   - **行为**：EF Core 会在生成 SQL 查询时，使用 `JOIN` 或多个子查询来一次性获取主表和相关表的数据。
 >
->   ------
+> ------
 >
 >   ### **特点**
 >
@@ -1931,7 +1931,7 @@ https://www.bilibili.com/list/watchlater?oid=734617646&bvid=BV1SD4y157nV&spm_id_
 >   - 避免了延迟加载带来的 **N+1 查询问题**。
 >   - 在某些场景下可能导致较大的数据传输量（如果导航属性中包含大量数据）。
 >
->   ------
+> ------
 >
 >   ### **示例**
 >
@@ -1982,14 +1982,14 @@ https://www.bilibili.com/list/watchlater?oid=734617646&bvid=BV1SD4y157nV&spm_id_
 >     
 >     ==反面验证==
 >         可以通过以下代码查看导航属性是否加载：
->     
+>         
 >     var orders = await context.Orders.ToListAsync();
 >     foreach (var order in orders)
 >     {
 >         Console.WriteLine($"Order ID: {order.Id}, Customer: {order.Customer}, Items Count: {order.Items?.Count}");
 >     }
 >     此时：
->     
+>         
 >     order.Customer 会是 null。
 >     order.Items 会是 null 或未初始化的集合。
 >     ```
@@ -2003,7 +2003,7 @@ https://www.bilibili.com/list/watchlater?oid=734617646&bvid=BV1SD4y157nV&spm_id_
 >   LEFT JOIN OrderItems i ON o.Id = i.OrderId;
 >   ```
 >
->   ------
+> ------
 >
 >   ### **优缺点**
 >
@@ -2018,7 +2018,7 @@ https://www.bilibili.com/list/watchlater?oid=734617646&bvid=BV1SD4y157nV&spm_id_
 >   1. 如果相关数据量较大，初始查询可能耗费时间和内存。
 >   2. 对未使用的导航属性可能导致不必要的加载。
 >
->   ------
+> ------
 >
 >   ### **适用场景**
 >

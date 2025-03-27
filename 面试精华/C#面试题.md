@@ -667,3 +667,246 @@ Q28 —— Q30 重要的三个问题
 > 当抽象类中的方法都是抽象方法的时候其实和接口一样了。
 >
 > 
+
+
+
+# 实际面试问题
+
+> 涟元科技（许左）
+>
+> 1、值类型和引用类型区别
+>
+> 2、依赖注入是什么？如何在依赖注入里实现LRU服务？
+>
+> 答：1. **依赖注入（Dependency Injection, DI）** 1. **依赖注入（Dependency Injection， DI）**
+>
+> - **定义**：
+>   - 依赖注入是一种设计模式，用于实现控制反转（IoC），将对象的创建和依赖关系的管理交给外部容器（如 DI 容器）来处理。
+>   - 通过构造函数、属性或方法注入依赖对象，而不是在类内部直接创建依赖。
+> - **优点**：
+>   - 提高代码的可测试性和可维护性。
+>   - 降低类之间的耦合度。
+>   - 便于管理和配置依赖关系。
+> - **应用场景**：
+>   - 在 ASP.NET Core 中，依赖注入是核心特性，用于注入服务（如数据库上下文、日志服务等）。
+>   - 在大型应用程序中，用于管理复杂的依赖关系。
+>
+> ------
+>
+> ### 2. **LRU（Least Recently Used）** 2. **LRU（最近最少使用）**
+>
+> - **定义**：
+>
+>   - LRU 是一种缓存淘汰策略，用于在缓存空间不足时，移除最近最少使用的数据。
+>   - 它基于时间局部性原理，认为最近被访问的数据在未来更有可能被再次访问。
+>
+> - **实现方式**：
+>
+>   - 通常使用双向链表和哈希表结合实现，以保证 O(1) 的时间复杂度。
+>
+> - **应用场景**：
+>
+>   - 缓存系统（如 Redis、Memcached）。
+>   - 页面置换算法（如操作系统中的虚拟内存管理）。
+>   - 资源池管理（如数据库连接池）。
+>
+>   ### **应用场景示例**
+>
+>   - **场景描述**：
+>     - 一个 Web 应用需要频繁查询用户信息，但用户信息在一定时间内不会变化。
+>     - 为了提高性能，可以使用 LRU 缓存来缓存用户信息，并通过依赖注入将缓存服务注入到需要的地方。
+>   - **实现步骤**：
+>     1. 定义一个 LRU 缓存服务。
+>     2. 在 DI 容器中注册该服务。
+>     3. 在需要缓存的地方注入该服务。
+>
+>   ```C#
+>   using System;
+>   using System.Collections.Generic;
+>   using Microsoft.Extensions.DependencyInjection;
+>         
+>   // 定义 LRU 缓存服务
+>   public class LruCache<TKey, TValue>
+>   {
+>       private readonly int _capacity;
+>       private readonly Dictionary<TKey, LinkedListNode<(TKey Key, TValue Value)>> _cache;
+>       private readonly LinkedList<(TKey Key, TValue Value)> _list;
+>         
+>       public LruCache(int capacity)
+>       {
+>           _capacity = capacity;
+>           _cache = new Dictionary<TKey, LinkedListNode<(TKey Key, TValue Value)>>(capacity);
+>           _list = new LinkedList<(TKey Key, TValue Value)>();
+>       }
+>         
+>       public TValue Get(TKey key)
+>       {
+>           if (_cache.TryGetValue(key, out var node))
+>           {
+>               _list.Remove(node);
+>               _list.AddFirst(node);
+>               return node.Value.Value;
+>           }
+>           return default;
+>       }
+>         
+>       public void Put(TKey key, TValue value)
+>       {
+>           if (_cache.TryGetValue(key, out var node))
+>           {
+>               _list.Remove(node);
+>               node.Value = (key, value);
+>           }
+>           else
+>           {
+>               if (_cache.Count >= _capacity)
+>               {
+>                   var lastNode = _list.Last;
+>                   _cache.Remove(lastNode.Value.Key);
+>                   _list.RemoveLast();
+>               }
+>               node = new LinkedListNode<(TKey Key, TValue Value)>((key, value));
+>               _cache[key] = node;
+>           }
+>           _list.AddFirst(node);
+>       }
+>   }
+>         
+>   // 注册 LRU 缓存服务
+>   public static class ServiceCollectionExtensions
+>   {
+>       public static IServiceCollection AddLruCache<TKey, TValue>(this IServiceCollection services, int capacity)
+>       {
+>           services.AddSingleton<LruCache<TKey, TValue>>(new LruCache<TKey, TValue>(capacity));
+>           return services;
+>       }
+>   }
+>         
+>   // 使用 LRU 缓存服务
+>   public class UserService
+>   {
+>       private readonly LruCache<int, string> _cache;
+>         
+>       public UserService(LruCache<int, string> cache)
+>       {
+>           _cache = cache;
+>       }
+>         
+>       public string GetUserName(int userId)
+>       {
+>           var userName = _cache.Get(userId);
+>           if (userName == null)
+>           {
+>               // 模拟从数据库获取用户信息
+>               userName = $"User{userId}";
+>               _cache.Put(userId, userName);
+>           }
+>           return userName;
+>       }
+>   }
+>         
+>   // 主程序
+>   class Program
+>   {
+>       static void Main(string[] args)
+>       {
+>           var services = new ServiceCollection();
+>           services.AddLruCache<int, string>(capacity: 100); // 注册 LRU 缓存服务
+>           services.AddTransient<UserService>(); // 注册用户服务
+>         
+>           var serviceProvider = services.BuildServiceProvider();
+>           var userService = serviceProvider.GetRequiredService<UserService>();
+>         
+>           // 使用缓存
+>           Console.WriteLine(userService.GetUserName(1)); // 第一次从数据库获取
+>           Console.WriteLine(userService.GetUserName(1)); // 第二次从缓存获取
+>       }
+>   }
+>   ```
+>
+>   
+>
+> 
+>
+> 
+>
+> 
+>
+> 3、async/await是什么，什么情况下会用和普通Thread有什么区别？
+
+
+
+
+
+
+
+> 波士顿科学（波科电话面试）
+>
+> md太恐怖了，问了不下20个问题。
+>
+> 1、如何实现浅拷贝和深拷贝呢
+>
+> 2、如何自定义一个线程池，可以设置线程的优先级
+>
+> 3、ManualResetEvent vs. AutoResetEvent 区别
+>
+> 4、如何实现一个事件总线eventbus？
+>
+> 5、C#里发生内存泄漏的场景有哪些？举点例子
+>
+> 6、如何让一个图片转为数据流的形式存储到文件
+>
+> 7、混淆加密软件有什么方法
+>
+> 8、如何实现一个单例，还要能实现延迟加载？
+>
+> 9、WPF性能怎么优化呢？
+>
+> 10、WPF中如何实现一个树形结构
+>
+> 11、如何实现序列化？
+>
+> 12、可空类型是什么？
+>
+> 13、如何实现多语言
+>
+> 14、如何完成.netframework到.netcore程序的迁移
+>
+> 15、.net core 和 .net framework 的区别
+>
+> 16、websocket 发送方如何降低延时
+>
+> 17、array.copy和clone的区别
+>
+> 18、如何实现一个内存数据库 增删改查
+>
+> 19、实现线程间的通信，其实就是问线程同步
+>
+> 20、static方法里能用this嘛
+>
+> 21、readonly 和 const的区别
+>
+> 
+>
+> 线下面试：
+>
+> md太远了。。。骑了40多分钟，屁股疼
+>
+> 我的笔试算法能力太差了，哎
+>
+> 
+>
+> 1、程序运行过程中，发生异常了，但没有写try...catch，应该怎么做呢？如何捕获这个异常？
+>
+> ```cmd
+> 在 App 类的构造函数中，订阅 DispatcherUnhandledException 事件，用于捕获所有UI线程上的未处理异常。
+> 你也可以处理 AppDomain.CurrentDomain.UnhandledException 事件，用于捕获非UI线程上的异常。
+> ```
+>
+> 
+>
+> 2、try...catch...finally，在try中return了会调用finally吗？
+>
+> 3、C#中对象dispose有几个阶段，分别做了什么？
+>
+> 4、wpf中如何把一个控件对象转为bitmap
