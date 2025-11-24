@@ -1,0 +1,26 @@
+SetFanDriverModeMax;CONTrol:DRViver:FANDRiver _1
+CONTrol:DRViver:FANDRiver?
+SetFanDriverModeAuto;CONTrol:DRViver:FANDRiver _0
+CONTrol:DRViver:FANDRiver?
+SetOutputOn;CONTrol:OUTPut:STATe _1
+GetOutput;CONTrol:OUTPut:STATe?
+SetOutputOff;CONTrol:OUTPut:STATe _0
+GetOutput;CONTrol:OUTPut:STATe?
+SetTargetTemperature10;CONTrol:TEMPerature:SPOint _10
+GetTargetTemperature;CONTrol:TEMPerature:SPOint?
+SetTargetTemperature20;CONTrol:TEMPerature:SPOint _20
+GetTargetTemperature;CONTrol:TEMPerature:SPOint?
+SetTargetTemperature30;CONTrol:TEMPerature:SPOint _30
+GetTargetTemperature;CONTrol:TEMPerature:SPOint?
+SetTargetTemperature40;CONTrol:TEMPerature:SPOint _40
+GetTargetTemperature;CONTrol:TEMPerature:SPOint?
+SetTargetTemperature44;CONTrol:TEMPerature:SPOint _44
+GetTargetTemperature;CONTrol:TEMPerature:SPOint?
+SetWindowsTemperature10;CONTrol:TEMPerature:ERRWin _10
+GetWindowsTemperature;CONTrol:TEMPerature:ERRWin?
+SetWindowsTemperature20;CONTrol:TEMPerature:ERRWin _20
+GetWindowsTemperature;CONTrol:TEMPerature:ERRWin?
+SetWindowsTemperature30;CONTrol:TEMPerature:ERRWin _30
+GetWindowsTemperature;CONTrol:TEMPerature:ERRWin?
+GetPressure;SENsor:PREssure?
+GetFlowRate;SENsor:FLOw?

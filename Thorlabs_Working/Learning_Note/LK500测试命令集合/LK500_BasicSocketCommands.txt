@@ -1,0 +1,10 @@
+SetCycleCount;CONTrol:CYCle:CYCNum _1
+SetStepNum;CONTrol:CYCle:STEPNum _50
+
+SelectStep;CONTrol:CYCle:STEPSel _1
+SetStepInfo;CONTrol:CYCle:STEPInfo _1,1,20.0,0
+GetStepInfo;CONTrol:CYCle:STEPInfo?
+
+GetCycleCount;CONTrol:CYCle:CYCNum?
+
+

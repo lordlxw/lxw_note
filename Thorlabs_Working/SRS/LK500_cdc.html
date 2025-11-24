@@ -1,0 +1,2839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <style>
+body,html { 
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+dev-name, scpi-list {
+    display: none;
+}
+
+p {
+  margin-left: 5px;
+}
+
+.codeSample {
+  margin-left: 5px;
+  font-family: Consolas,"courier new";
+}
+
+img {
+  margin-left: 5px;
+}
+
+@media print {
+   .pageBody {
+    overflow-y: auto !important;
+    height: auto !important;
+  }
+
+  .content {
+    overflow: auto !important;
+    max-height: initial !important;
+    transition: none !important;
+  }
+
+  .noSplit {
+    break-inside: avoid;
+  }
+  
+  .header-right {
+    display: none !important;
+  }
+ 
+  .content .scpiLong {
+    font-size: 12px !important;
+  }
+  
+  .collapsible {
+    font-weight: bold !important;
+    color-adjust: exact!important;  
+    -webkit-print-color-adjust: exact!important; 
+    print-color-adjust: exact!important;
+  }
+  
+  rect {
+    color-adjust: exact!important;  
+    -webkit-print-color-adjust: exact!important; 
+    print-color-adjust: exact!important;
+  }
+  
+  svg {
+    width: 95% !important;
+  }
+}
+
+a[href^="http"]:after {
+     content: " " url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAVklEQVR4Xn3PgQkAMQhDUXfqTu7kTtkpd5RA8AInfArtQ2iRXFWT2QedAfttj2FsPIOE1eCOlEuoWWjgzYaB/IkeGOrxXhqB+uA9Bfcm0lAZuh+YIeAD+cAqSz4kCMUAAAAASUVORK5CYII=);
+}
+
+svg {
+  margin-left: 5px;
+}
+
+.verInfo{
+  float:right;
+  text-align: right;
+  width: 300px;
+  margin-right: 5px;
+}
+
+.header {
+  overflow: hidden;
+  background-color: #f1f1f1;
+  padding: 5px 5px;
+  left: 0;
+  top: 0;
+}
+
+.pageBody {
+  overflow-y: scroll; 
+  overflow-x: hidden; 
+  height: calc(100vh - 50px);
+}
+
+.header a {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 8px;
+  text-decoration: none;
+  font-size: 18px; 
+  line-height: 22px;
+  border-radius: 4px;
+}
+
+.header span {
+  padding: 0px;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.header a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.header-right {
+  float: right;
+}
+
+.tooltip {
+  display: inline-block;
+  border-bottom: 1px dotted black;
+  cursor: help;
+}
+
+.collapsible {
+  background-color: #777;
+  background-image: linear-gradient(#777, #555);
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+  margin: 0px;
+  margin-top: 2px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 12px;
+}
+
+.collapsible .scpi {
+  float:left;
+  font-size: 14px;
+  width: 280px;
+}
+
+.collapsible .briefScpi {
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+.active, .collapsible:hover {
+  background-color: #555;
+  background-image: linear-gradient(#555, #777);
+}
+
+.content {
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+  z-index: 0;
+}
+
+pre {
+  margin: 5px;
+  height: auto;
+  max-height: 400px;
+  overflow: auto;
+  background-color: #eeeeee;
+  word-break: normal !important;
+  word-wrap: normal !important;
+  white-space: pre !important;
+}
+
+.content ul { 
+  position: relative;
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.content li {
+  margin: 0;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.content .scpiLong {
+  width: 99%;
+  margin: 10px 5px 10px 5px;
+  font-size: 18px;
+}
+
+.details{
+  padding: 7px 5px;
+  margin: 4px;
+  font-size: 14px;
+}
+
+.detailListing {
+  margin:  5px;
+}
+
+.detailListing ul li{
+  list-style-type: circle;
+  margin-left: 20px;
+}
+
+span.param , span.optParam {
+  float: left;
+  width: 100px;
+}
+
+span.optParam {
+  font-style: italic;
+}
+
+span.paramType {
+  float: left;
+  font-style: italic;
+  width: 140px;
+}
+
+li.highlightParam {
+  font-weight: bold;
+}
+
+.info {
+  background-color: #c7ffd6;
+  border-left: 6px solid #389c53;
+  padding: 7px 5px;
+  margin: 4px;
+  background-image: linear-gradient(to right, #c7ffd6, #f1f1f1);
+  font-size: 14px;
+}
+
+.note {
+  background-color: #ffdddd;
+  border-left: 6px solid #DE1616;
+  padding: 7px 5px;
+  margin: 4px;
+  background-image: linear-gradient(to right, #ffdddd, #f1f1f1);
+  font-size: 14px;
+}
+
+.example {
+  background-color: #E0E6F8;
+  border-left: 6px solid #075C91;
+  padding: 7px 5px;
+  margin: 4px;
+  font-family: monospace;
+  background-image: linear-gradient(to right, #E0E6F8, #f1f1f1);
+  font-size: 14px;
+}
+
+.sufixDocu, .paramDocu, .resultDocu {
+  padding-left: 7px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.resultDocu{
+  padding-left: 7px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+span.scpiCmd {
+  font-family: monospace;
+}
+
+div.scpiSpacer {
+  display: inline-block;
+  width: 180px;
+  font-weight: bold;
+}
+
+div.filter {
+  float:right;
+  display: inline-block;
+  width: 100px;
+  font-weight: bold;
+}
+
+
+div.scpiLongSpacer {
+  display: inline-block;
+  width: 600px;
+  font-weight: bold;
+}
+
+.jsonString { 
+  color: green;
+}
+
+.jsonNumber { 
+  color: darkorange;
+}
+
+.jsonBoolean { 
+  color: blue; 
+}
+
+.jsonNull { 
+  color: magenta; 
+}
+
+.jsonKey {
+   color: red; 
+}
+
+    </style>
+    <script>
+    function JSON_SyntaxHighlight(json) 
+    {
+        json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+            var cls = 'jsonNumber';
+            if (/^"/.test(match)) 
+            {
+                if (/:$/.test(match)) 
+                {
+                    cls = 'jsonKey';
+                }
+                else
+                {
+                    cls = 'jsonString';
+                }
+            } 
+            else if (/true|false/.test(match)) 
+            {
+                cls = 'jsonBoolean';
+            } 
+            else if (/null/.test(match)) 
+            {
+                cls = 'jsonNull';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+        });
+    }
+    </script>
+    <title>LK500 SCPI Commands</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAABcklEQVR4nO3cMQ7DIBAAwSPK/79MnkBlEWtnWiiQtbrCxa2Z2UPW5/YDuEsAcQKIE0CcAOIEECeAuO/pgp8E77YO5yZAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4Accc9gbP3adXcs9Z696rCP/9+JkCcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcQKIE0CcAOIEECeAOAHECSBOAHECiBNAnADiBBAngDgBxAkgTgBxAogTQJwA4gQQJ4A4AcQJIE4AcWtm9u1HcI8JECeAOAHECSBOAHECiBNA3A/BiAoBsMLaFQAAAABJRU5ErkJggg==" />
+    <dev-name>LK500</dev-name>
+    <scpi-list>
+		<scpi-cmd cmd-str="*CLS">Clears all event registers and error queue.</scpi-cmd>
+		<scpi-cmd cmd-str="*ESE <bitmask>">Programs the 8 bit wide Standard Event Enable Register</scpi-cmd>
+		<scpi-cmd cmd-str="*ESE?">Reads the 8 bit wide Standard Event Enable Register</scpi-cmd>
+		<scpi-cmd cmd-str="*ESR?">Reads and clears the Standard Event Register</scpi-cmd>
+		<scpi-cmd cmd-str="*IDN?">Reads the unit’s identification string</scpi-cmd>
+		<scpi-cmd cmd-str="*OPC">Sets the Operation Complete bit in the Standard Event Register</scpi-cmd>
+		<scpi-cmd cmd-str="*OPC?">Operation complete query</scpi-cmd>
+		<scpi-cmd cmd-str="*RST">Resets all SCPI and sensor parameters to default</scpi-cmd>
+		<scpi-cmd cmd-str="*SRE <bitmask>">Service request enable command</scpi-cmd>
+		<scpi-cmd cmd-str="*SRE?">Service request enable query</scpi-cmd>
+		<scpi-cmd cmd-str="*STB?">Status byte query</scpi-cmd>
+		<scpi-cmd cmd-str="*TST?">Self-test query</scpi-cmd>
+		<scpi-cmd cmd-str="*WAI">Wait-to-continue command</scpi-cmd>
+		<scpi-cmd cmd-str="CAPTure:INTErval <interval>">Sets capture interval</scpi-cmd>
+		<scpi-cmd cmd-str="CAPTure:INTErval?">Queries capture interval</scpi-cmd>
+		<scpi-cmd cmd-str="CAPTure:MODe <mode>">Sets capture state</scpi-cmd>
+		<scpi-cmd cmd-str="CAPTure:MODe?">Queries capture mode</scpi-cmd>
+		<scpi-cmd cmd-str="CAPTure:STate <state>">Sets capture state</scpi-cmd>
+		<scpi-cmd cmd-str="CAPTure:STate?">Queries capture state</scpi-cmd>
+		<scpi-cmd cmd-str="CAPTure:TIMe <time>">Sets capture time</scpi-cmd>
+		<scpi-cmd cmd-str="CAPTure:TIMe?">Queries capture time</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:ANALoginput:ENabled <state>">Sets AnalogIn Enabled/Disabled</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:ANALoginput:ENabled?">Queries AnalogIn state</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:ANALoginput:VOLt?">Queries TriggerIn voltage level</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:CYCle:CycleInfo?">Queries cycle info</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:CYCle:CYCNum <cyclenum>">Sets cycle number</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:CYCle:CYCNum?">Queries cycle number</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:CYCle:HALt <state>">Sets cycle halt state</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:CYCle:HALt?">Queries cycle halt state</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:CYCle:State?">Queries cycle state</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:CYCle:STEPInfo ramptime,holdtime,holdtemp,RunMode">Sets step info</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:CYCle:STEPInfo?">Queries step info</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:CYCle:STEPNum <stepnum>">Sets step number</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:CYCle:STEPNum?">Queries step number</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:CYCle:STEPSel <stepsel>">Sets select step number</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:CYCle:STEPSel?">Queries select step number</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:DRViver:FANDRiver <mode>">Sets fan driver mode</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:DRViver:FANDRiver?">Queriesfan fan driver mode</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:DRViver:PUMPDRiver <level>">Sets Pump Driver level</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:DRViver:PUMPDRiver?">Queries Pump Driver level</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:OUTPut:STATe">Sets Output State</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:OUTPut:STATe?">Queries Output State</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:OUTPut:WORKmode <workmode>">Sets Work Mode</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:OUTPut:WORKmode?">Queries Work Mode</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:COOLing:KP <value>">Sets Cooling mode PID Kp</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:COOLing:KP?">Queries Cooling mode PID Kp</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:COOLing:PERiod <value>">Sets Cooling mode PID period value</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:COOLing:PERiod?">Queries Cooling mode PID period value</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:COOLing:TD <value>">Sets Cooling mode PID Td value</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:COOLing:TD?">Queries Cooling mode PID Td value</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:COOLing:TI <value>">Sets Cooling mode PID Ti value</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:COOLing:TI?">Queries Cooling mode PID Ti value</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:HEATing:KP <value>">Sets Heating mode PID Kp</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:HEATing:KP?">Queries Heating mode PID Kp</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:HEATing:PERiod <value>">Sets Heating mode PID period value</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:HEATing:PERiod?">Queries Heating mode PID period value</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:HEATing:TD <value>">Sets Heating mode PID Td value</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:HEATing:TD?">Queries Heating mode PID Td value</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:HEATing:TI <value>">Sets Heating mode PID Ti value</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:PID:HEATing:TI?">Queries Heating mode PID Ti value</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:RUNMode <state>">Sets RunMode state</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:RUNMode?">Queries cycle halt state</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:TEMPerature:ERRWin <errwin>">Sets error window</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:TEMPerature:ERRWin?">Queries error window</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:TEMPerature:SPOint">Sets target temperature in float</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:TEMPerature:SPOint?">Queries target temperature in float</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:TRIGger:ENabled <state>">Sets Trigger Enabled/Disabled</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:TRIGger:ENabled?">Queries Trigger state</scpi-cmd>
+		<scpi-cmd cmd-str="CONTrol:TRIGger:LEvel?">Queries trigger level</scpi-cmd>
+		<scpi-cmd cmd-str="DISPlay:BRIGhtness <brightness>">Sets display brightness in percent</scpi-cmd>
+		<scpi-cmd cmd-str="DISPlay:BRIGhtness?">Queries display brightness in percent</scpi-cmd>
+		<scpi-cmd cmd-str="DISPlay:DARKmode state">Enables or disables display light of device</scpi-cmd>
+		<scpi-cmd cmd-str="DISPlay:DARKmode?">Tests if Darkmode is enabled</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:AMBient:HUMidity?">Queries ambient humidity in float</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:AMBient:TEMPerature?">Queries ambient temperature in float</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:FLOw?">Queries ambient flow in float,unit as Lpm</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:PREssure?">Queries ambient humidity in float</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:Apara">Sets NTC sensor A value</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:Apara?">Queries NTC sensor A value</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:ACTualtemp?">Queries actual temperature in float</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:Bpara">Sets NTC sensor B value</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:Bpara?">Queries NTC sensor B value</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:BETA">Sets NTC sensor beat value</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:BETA?">Queries NTC sensor beat value</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:Cpara">Sets NTC sensor C value</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:Cpara?">Queries NTC sensor C value</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:COEFFType">Sets temperature sensor coefficient type</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:COEFFType?">Queries temperature sensor coefficient type</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:INcome?">Queries income temperature in float</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:NTCType">Sets temperature sensor NTC type</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:NTCType?">Queries temperature sensor NTC type</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:OUTcome?">Queries outcome temperature in float</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:R25">Sets NTC sensor beat value</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:R25?">Queries NTC sensor beat value</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:SOURce">Sets temperature sensor source</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:SOURce?">Queries temperature sensor source</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:UNIT">Sets temperature unit</scpi-cmd>
+		<scpi-cmd cmd-str="SENsor:TEMPerature:UNIT?">Queries temperature unit</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:BEEPer[:IMMediate]">Plays a short beep</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:ADDRess <address>">Changes IPv4 address of device</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:ADDRess?">Queries IPv4 address of device</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:DFU:PORt <port>">Sets a new Ethernet port for the DFU server</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:DFU:PORt?">Queries Ethernet port for the DFU server</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:DHCP <state>">Enables or disables DHCP of device</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:DHCP?">Tests if DHCP is enabled</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:HOSTname <name>">Sets a new hostname for the device</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:HOSTname?">Queries hostname of the device</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:MAC?">Queries MAC address of device</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:PROPagation <enable>">Enables/Disables LAN service propagation</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:PROPagation?">Tests if service propagation is active or not</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:SCPI:PORt <port>">Sets a Ethernet new port for the SCPI server</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:SCPI:PORt?">Queries Ethernet port for the SCPI server</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:SMASk <netmask>">Changes IPv4 netmask of device</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:SMASk?">Queries IPv4 netmask of device</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:WEB:PORt <port>">Sets a Ethernet new port for the Web server</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:COMMunicate:LAN:WEB:PORt?">Queries Ethernet port for the Web server</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:DATE <year>,<month>,<day>">Changes device date</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:DATE?">Returns device date</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:ERRor[:NEXT]?">Reads and removes oldest element of SCPI error queue</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:ERRor:COUNt?">Tests how many errors are stored in SCPI error queue</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:FWD? <remCmd>">Forwards a command to the application controller</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:LOADFactory">load factory data</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:LOCK <state>">Sets GUI lock state</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:LOCK?">Queries GUI lock state</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:PASSword <oldPas>, <newPas>, <cryptLAN>">Overwrites the system password used for authentication</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:PASSword?">Queries password used for authentication</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:SERial:TRANsmit:BAUD <baudrate>">Queries baudrate of RS232 interface</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:SERial:TRANsmit:BAUD? <special>">Queries baudrate of serial interface</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:STAte:CompERRor?">Reads the compressor error state</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:STAte:ERRor?">Reads the device error state</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:STAte:WARNing?">Reads the device warning state</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:TIME <hour>,<minute>,<seconds>">Changes device time</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:TIME?">Returns device time</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:TIME:MODE <timeMode>">Changes clock for summer or winter time</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:TIME:MODE?">Tests if clock configured for summer or winter time</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:TIME:NTP <timezone>,<isSummertime>,<ipForServer>">Synchronize device time with external NTP time server</scpi-cmd>
+		<scpi-cmd cmd-str="SYSTem:VERSion?">Returns SCPI version string</scpi-cmd>
+
+    </scpi-list>
+</head>
+<body>
+  <div class="header">
+    <span>LK500 SCPI Commands</span>
+    <div class="header-right">
+      <a href="#None">None</a>
+      <a href="#CAPT">CAPT</a>
+      <a href="#CONT">CONT</a>
+      <a href="#DISP">DISP</a>
+      <a href="#SEN">SEN</a>
+      <a href="#SYST">SYST</a>
+
+    </div>
+  </div>
+  <div class="pageBody">
+    <div id="SCPI_Desc">
+      <div class="verInfo">V 0.0.2 generated 10 Sep 2025, 13:59:12</div>
+      <p>This is the description of the <a target="_blank" href="https://www.thorlabs.com/">Thorlabs</a> LK500 remote interface. This Benchtop Development Kit can be remotely controlled using the SCPI (Standard Commands for Programmable Instruments) interface.</p>
+      <p>In 1975, the IEEE standardized a bus developed by Hewlett-Packard originally called HPIB (Hewlett-Packard Interface Bus), later changed to GPIB (General Purpose Interface Bus). 
+        The standard was called IEEE 488 (IEEE 488.1) and it defined mechanical aspects of the bus. The later IEEE 488.2 defined its protocol properties. What was missing were set of 
+        rules between the manufacturers on commands to control the instruments. Sometimes these varied even between different models from the same manufacturer.</p>
+      <p>In 1990 SCPI Consortium released the first SCPI standard as an additional layer for the IEEE-488.2 standard.</p>
+      <p>SCPI commands are ASCII strings, which are sent to instrument over the physical communication layer. They can perform:</p>
+      <ul>
+        <li> Set operations, for example the <span class="scpiCmd">*RST</span> command (resetting the instrument).</li>
+        <li> Query operations, for example the <span class="scpiCmd">*IDN?</span> query (querying the instrument’s identification string).</li>
+      </ul>
+      <p>Some SCPI commands exist as both set commands and query commands. An example is an Powermeter's averaging command <span class="scpiCmd">SENS:AVER</span>. You can set it with the 
+        SCPI command <span class="scpiCmd">SENS:AVER 2</span>, and also query its current value with the <span class="scpiCmd">SENS:AVER?</span>.</p>
+
+      <p>The format mentioned in this manual e.g.: <span class="scpiCmd">SENSe#:AVERage[:COUNt] &lt;pres&gt;</span> is called canonical form. Here are the most important rules to remember:</p>
+      <ul>
+        <li>The parts within square brackets are not mandatory and can be left out.</li>
+        <li>All # within the command represent a suffix positive integer number starting at 1. If there is only one suffix you may skip it because default is applied internally. 
+           If there are two or more suffix it is mandatory to specify all.</li>
+        <li>The capital letter parts are mandatory; the small letters can be omitted. This is called short form. An example of the above command in the short form is <span class="scpiCmd">SENS1:AVER 3</span>. 
+           You can use either the short form, or the long form <span class="scpiCmd">SENSE1:AVERAGE 3</span>, but nothing in between, e.g. <span class="scpiCmd">SENS1:AVERA 3</span>.</li>
+        <li>The SCPI commands are case-insensitive. You can also use the short form <span class="scpiCmd">sens1:aver 3</span> or or the long form <span class="scpiCmd">sense1:average 3</span></li>
+        <li>Combine multiple commands into one string using selmicolon ';'. For example, a combined string of <span class="scpiCmd">SENS1:AVER 3</span> and <span class="scpiCmd">SENS1:CORR:WAV 850</span> is 
+            <span class="scpiCmd">SENS1:AVER 3;CORR:WAV 850</span>. Notice that the second command does not have the <span class="scpiCmd">SENS1:</span> part. The reason is, that the command tree path does 
+            not change within one string. If you want to reset the command tree path to the root, use the colon character at the beginning of the second command: <span class="scpiCmd">SENS1:AVER 3;:SENS2:CORR:WAV 850</span>.</li>
+        <li>Create query forms by adding a question mark, mostly to the end: <span class="scpiCmd">SENS1:AVER?</span> Sometimes there is an additional parameter placed after the 
+            question mark. There must be a space character between the question mark and the additional parameter. For example: <span class="scpiCmd">SENS1:CORR:WAV? MIN</span></li>
+      </ul>
+    </div>
+    
+    <div id="statusRegisterSetDesc">
+    <h1>SCPI Registers</h1>
+      <p>The SCPI system defines a status reporting system based on status register sets. Every state or event is mapped to a single bit in the values of the register sets. 
+      The LK500 defines the following register sets: </p>
+      <ul>
+        <li><b>AUX</b>ilary: Auxiliary system monitoring like shutter or fan.</li>
+        <li><b>OPER</b>ation: Measurement state monitoring.</li>
+        <li><b>QUEST</b>ionalbe: Measure result reliability status monitoring.</li>
+        <li><b>STD</b>andard Byte: SCPI global system status byte.</li>
+      </ul>
+
+      <p>Every register set contains 5 registers.</p>
+      <ul>
+        <li><b>COND</b>ition: The Condition register monitors the actual state. For example if a sensor is currently connected or not.</li>
+        <li><b>PTR</b>ansition: The Positive Transition register masks bit changes from 0 to 1 of the Condition register to the Event register.</li>
+        <li><b>NTR</b>ansition: The Negative Transition register masks bit changes from 1 to 0 of the Condition register to the Event register.</li>
+        <li><b>EVENT</b>: The Event register shows changes of the Condition register. Some conditions only last for a short moment and are otherwise hard to detect.</li>
+        <li><b>ENAB</b>le: The Enable register masks if changes of the Event registers (TODO JS registers plural?) are forwarded to a higher level hierarchy Condition register.</li>
+      </ul>
+      <p>The following image visualizes the logical relation between the registers.</p>
+      <svg width="600px" viewBox="239 259 690 160" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">  <g>    <rect style="fill: #ffffff" x="240" y="320" width="75.2" height="38"/>    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="240" y="320" width="75.2" height="38"/>    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="277.6" y="343.8">      <tspan x="277.6" y="343.8">CON</tspan>    </text>  </g>  <g>    <rect style="fill: #ffffff" x="360" y="260" width="136.65" height="38"/>    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="360" y="260" width="136.65" height="38"/>    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="428.325" y="283.8">      <tspan x="428.325" y="283.8">PTR: CON bit 0 -&gt; 1</tspan>    </text>  </g>  <g>    <rect style="fill: #ffffff" x="359.25" y="380" width="138.15" height="38"/>    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="359.25" y="380" width="138.15" height="38"/>    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="428.325" y="403.8">      <tspan x="428.325" y="403.8">NTR: CON bit 1 -&gt; 0</tspan>    </text>  </g>  <g>    <rect style="fill: #ffffff" x="540" y="320" width="75.2" height="38"/>    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="540" y="320" width="75.2" height="38"/>    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="577.6" y="343.8">      <tspan x="577.6" y="343.8">EVENT</tspan>    </text>  </g>  <g>    <rect style="fill: #ffffff" x="680" y="320" width="75.2" height="38"/>    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="680" y="320" width="75.2" height="38"/>    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="717.6" y="343.8">      <tspan x="717.6" y="343.8">ENAB</tspan>    </text>  </g>  <g>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="277.6,320 277.6,279 355.528,279 "/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="347.764,284 357.764,279 347.764,274 "/>  </g>  <g>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="277.6,358 277.6,399 354.778,399 "/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="347.014,404 357.014,399 347.014,394 "/>  </g>  <g>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="496.65,279 577.6,279 577.6,315.528 "/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="572.6,307.764 577.6,317.764 582.6,307.764 "/>  </g>  <g>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="497.4,399 577.6,399 577.6,362.472 "/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="582.6,370.236 577.6,360.236 572.6,370.236 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="615.2" y1="339" x2="675.528" y2="339"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="667.764,344 677.764,339 667.764,334 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 4; stroke: #000000" x1="755.2" y1="339" x2="847.528" y2="339"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="839.764,344 849.764,339 839.764,334 "/>  </g>  <g>    <rect style="fill: #ffffff" x="852" y="320" width="75.2" height="38"/>    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="852" y="320" width="75.2" height="38"/>    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="889.6" y="343.8">      <tspan x="889.6" y="343.8">CON</tspan>    </text>  </g></svg>
+      <p>The Condition register always reflects the current state. For example if a sensor is connected or not. The Positive Transition register masks if a
+      certain condition becomes true (bit changes from 0 to 1) to set the bit at the same position in the Event register. For example to set the Event register 
+      bit to 1 if the sensor got connected. <br/>The Negative Transition register tests if condition becomes false to update the Event register. For example to 
+      set event register bit to 1 if the sensor got disconnected. The Enable register masks if changes of the Event register should be reported to the 
+      higher level hierarchy Condition register. The register sets are logically chained. The following section will provide further details about the chaining.</p>
+      <p>All registers except the STB register group are 16 bit wide. The following paragraph gives a short description of bit mask in general. Bit mask use the binary
+      representation of numbers to store boolean states (true, false) or (active, inactive). This is a memory saving way to store multiple conditions at once.
+      If you look on a decimal number 9 for example the binary representation is 1001 = 1 * 2 ^ 4 + 1 * 2 ^ 0. This bit mask means condition at bit position 1 and 4 are true. 
+      All other conditions are false as all other bits are set to 0.<br/>
+      To test if a certain bit is set to 1 you can either use bit logic operations or use generic mathematic operations. Bit logic operations are available in almost every 
+      programming language. In Python you would write something like condition = bitmask &amp; (1 &lt;&lt; position).<br/>
+      If you want to use standard math you can use the following formula: condition = round_down(bitmask / (2 ^ bitPos)) modulus 2.</p>
+      <p>The register sets are linked together in an hirarchical way. This enables you to check for a summarized condition only. If the 
+      highlevel condition becomes true you can than go down the hierarchy to query the details causing the event.</p>
+
+      <svg width="600px" viewBox="820 1857 642 344" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">  <g>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1100,2022 1160,2022 1160,2180 1315.53,2180 "/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,2185 1317.76,2180 1307.76,2175 "/>  </g>  <g>    <rect style="fill: #ffffff" x="1320" y="2020" width="140" height="180"/>    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1320" y="2020" width="140" height="180"/>    <text font-size="14.1111" style="fill: #000000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:700" x="1451" y="2115.28">      <tspan x="1451" y="2115.28">*STB</tspan>    </text>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="2058">    <tspan x="1180" y="2058">Protection event </tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="2078">    <tspan x="1180" y="2078">Error queue state chng</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="2098">    <tspan x="1180" y="2098">Questionable status</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="2060" x2="1315.53" y2="2060"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,2065 1317.76,2060 1307.76,2055 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="2118">    <tspan x="1180" y="2118">Message Available</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="2080" x2="1315.53" y2="2080"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,2085 1317.76,2080 1307.76,2075 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="2120" x2="1315.53" y2="2120"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,2125 1317.76,2120 1307.76,2115 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="2138">    <tspan x="1180" y="2138">Standard Event Status</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="2140" x2="1315.53" y2="2140"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,2145 1317.76,2140 1307.76,2135 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="2158">    <tspan x="1180" y="2158">Service Request</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="2160" x2="1315.53" y2="2160"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,2165 1317.76,2160 1307.76,2155 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="2178">    <tspan x="1180" y="2178">Operation Status</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="2180" x2="1315.53" y2="2180"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,2185 1317.76,2180 1307.76,2175 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="2044">    <tspan x="1324" y="2044">bit 0(1)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="2064">    <tspan x="1324" y="2064">bit 1(2)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="2084">    <tspan x="1324" y="2084">bit 2(4)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="2104">    <tspan x="1324" y="2104">bit 3(8)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="2124">    <tspan x="1324" y="2124">bit 4(16)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="2144">    <tspan x="1324" y="2144">bit 5(32)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="2164">    <tspan x="1324" y="2164">bit 6(64)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="2184">    <tspan x="1324" y="2184">bit 7(128)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="2038">    <tspan x="1180" y="2038">Aux Status </tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="2040" x2="1315.53" y2="2040"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,2045 1317.76,2040 1307.76,2035 "/>  </g>  <g>    <rect style="fill: #ffffff" x="960" y="1860" width="140" height="324"/>    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="960" y="1860" width="140" height="324"/>    <text font-size="14.1111" style="fill: #000000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:700" x="1091" y="2018.46">      <tspan x="1091" y="2018.46">STAT:</tspan>      <tspan x="1091" y="2036.1">OPER</tspan>    </text>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1870">    <tspan x="820" y="1870">reserved</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1890">    <tspan x="820" y="1890">reserved</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1910">    <tspan x="820" y="1910">Ranging</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1872" x2="955.528" y2="1872"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1877 957.764,1872 947.764,1867 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1876">    <tspan x="964" y="1876">bit 0(1)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1930">    <tspan x="820" y="1930">Peak Finder</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1892" x2="955.528" y2="1892"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1897 957.764,1892 947.764,1887 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1912" x2="955.528" y2="1912"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1917 957.764,1912 947.764,1907 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1932" x2="955.528" y2="1932"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1937 957.764,1932 947.764,1927 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1950">    <tspan x="820" y="1950">Measuring</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1952" x2="955.528" y2="1952"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1957 957.764,1952 947.764,1947 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1970">    <tspan x="820" y="1970">Scope Triggered</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1972" x2="955.528" y2="1972"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1977 957.764,1972 947.764,1967 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1990">    <tspan x="820" y="1990">Scope Armed</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1992" x2="955.528" y2="1992"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1997 957.764,1992 947.764,1987 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="2010">    <tspan x="820" y="2010">Zeroing</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="2012" x2="955.528" y2="2012"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,2017 957.764,2012 947.764,2007 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="2030">    <tspan x="820" y="2030">Sensor connected</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="2032" x2="955.528" y2="2032"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,2037 957.764,2032 947.764,2027 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="2050">    <tspan x="820" y="2050">Data ready to fetch</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="2052" x2="955.528" y2="2052"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,2057 957.764,2052 947.764,2047 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="2070">    <tspan x="820" y="2070">Thermopile Accelerator</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="2072" x2="955.528" y2="2072"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,2077 957.764,2072 947.764,2067 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="2090">    <tspan x="820" y="2090">Head overheated</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="2092" x2="955.528" y2="2092"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,2097 957.764,2092 947.764,2087 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="2110">    <tspan x="820" y="2110">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="2112" x2="955.528" y2="2112"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,2117 957.764,2112 947.764,2107 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="2170">    <tspan x="820" y="2170">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="2172" x2="955.528" y2="2172"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,2177 957.764,2172 947.764,2167 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1896">    <tspan x="964" y="1896">bit 1(2)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1916">    <tspan x="964" y="1916">bit 2(4)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1936">    <tspan x="964" y="1936">bit 3(8)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1956">    <tspan x="964" y="1956">bit 4(16)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1976">    <tspan x="964" y="1976">bit 5(32)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1996">    <tspan x="964" y="1996">bit 6(64)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="2016">    <tspan x="964" y="2016">bit 7(128)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="2036">    <tspan x="964" y="2036">bit 8(256)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="2056">    <tspan x="964" y="2056">bit 9(512)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="2076">    <tspan x="964" y="2076">bit 10(1024)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="2096">    <tspan x="964" y="2096">bit 11(2048)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="2116">    <tspan x="964" y="2116">bit 12(4096)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="2136">    <tspan x="964" y="2136">bit 13(8192)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="2156">    <tspan x="964" y="2156">bit 14(16384)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="2176">    <tspan x="964" y="2176">bit 15(32768)</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="2100" x2="1315.53" y2="2100"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,2105 1317.76,2100 1307.76,2095 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="2132" x2="955.528" y2="2132"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,2137 957.764,2132 947.764,2127 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="2152" x2="955.528" y2="2152"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,2157 957.764,2152 947.764,2147 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="2150">    <tspan x="820" y="2150">reserved</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="2130">    <tspan x="820" y="2130">reserved</tspan>  </text></svg>
+      <p>The STAT:OPER status register set contains state information about the instrument’s normal
+      operation. The register set might report to the SCPI Standard Byte register bit 7 if 
+      STAT:OPER:ENAB bit mask is set active.</p>  
+
+     <svg width="600px" viewBox="819 1057 642 328" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">  <g>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1100,1202 1160,1202 1160,1280 1315.53,1280 "/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,1285 1317.76,1280 1307.76,1275 "/>  </g>  <g>    <rect style="fill: #ffffff" x="960" y="1060" width="140" height="324"/>    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="960" y="1060" width="140" height="324"/>    <text font-size="14.1111" style="fill: #000000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:700" x="1091" y="1218.46">      <tspan x="1091" y="1218.46">STAT:</tspan>      <tspan x="1091" y="1236.1">QUEST</tspan>    </text>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1070">    <tspan x="820" y="1070">Questionable Voltage</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1090">    <tspan x="820" y="1090">Questionable Current</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1110">    <tspan x="820" y="1110">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1072" x2="955.528" y2="1072"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1077 957.764,1072 947.764,1067 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1076">    <tspan x="964" y="1076">bit 0(1)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1130">    <tspan x="820" y="1130">Questionable Power</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1092" x2="955.528" y2="1092"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1097 957.764,1092 947.764,1087 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1112" x2="955.528" y2="1112"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1117 957.764,1112 947.764,1107 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1132" x2="955.528" y2="1132"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1137 957.764,1132 947.764,1127 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1150">    <tspan x="820" y="1150">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1152" x2="955.528" y2="1152"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1157 957.764,1152 947.764,1147 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1170">    <tspan x="820" y="1170">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1172" x2="955.528" y2="1172"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1177 957.764,1172 947.764,1167 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1190">    <tspan x="820" y="1190">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1192" x2="955.528" y2="1192"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1197 957.764,1192 947.764,1187 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1210">    <tspan x="820" y="1210">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1212" x2="955.528" y2="1212"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1217 957.764,1212 947.764,1207 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1230">    <tspan x="820" y="1230">Questionable Calibrat</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1232" x2="955.528" y2="1232"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1237 957.764,1232 947.764,1227 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1252" x2="955.528" y2="1252"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1257 957.764,1252 947.764,1247 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1270">    <tspan x="820" y="1270">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1272" x2="955.528" y2="1272"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1277 957.764,1272 947.764,1267 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1290">    <tspan x="820" y="1290">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1292" x2="955.528" y2="1292"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1297 957.764,1292 947.764,1287 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1310">    <tspan x="820" y="1310">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1312" x2="955.528" y2="1312"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1317 957.764,1312 947.764,1307 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1370">    <tspan x="820" y="1370">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1372" x2="955.528" y2="1372"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1377 957.764,1372 947.764,1367 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1096">    <tspan x="964" y="1096">bit 1(2)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1116">    <tspan x="964" y="1116">bit 2(4)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1136">    <tspan x="964" y="1136">bit 3(8)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1156">    <tspan x="964" y="1156">bit 4(16)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1176">    <tspan x="964" y="1176">bit 5(32)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1196">    <tspan x="964" y="1196">bit 6(64)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1216">    <tspan x="964" y="1216">bit 7(128)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1236">    <tspan x="964" y="1236">bit 8(256)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1256">    <tspan x="964" y="1256">bit 9(512)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1276">    <tspan x="964" y="1276">bit 10(1024)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1296">    <tspan x="964" y="1296">bit 11(2048)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1316">    <tspan x="964" y="1316">bit 12(4096)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1336">    <tspan x="964" y="1336">bit 13(8192)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1356">    <tspan x="964" y="1356">bit 14(16384)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="964" y="1376">    <tspan x="964" y="1376">bit 15(32768)</tspan>  </text>  <g>    <rect style="fill: #ffffff" x="1320" y="1200" width="140" height="180"/>    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1320" y="1200" width="140" height="180"/>    <text font-size="14.1111" style="fill: #000000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:700" x="1451" y="1295.28">      <tspan x="1451" y="1295.28">*STB</tspan>    </text>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="1238">    <tspan x="1180" y="1238">Protection event </tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="1258">    <tspan x="1180" y="1258">Error queue state chng</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="1278">    <tspan x="1180" y="1278">Questionable status</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="1240" x2="1315.53" y2="1240"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,1245 1317.76,1240 1307.76,1235 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="1298">    <tspan x="1180" y="1298">Message Available</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="1260" x2="1315.53" y2="1260"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,1265 1317.76,1260 1307.76,1255 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="1300" x2="1315.53" y2="1300"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,1305 1317.76,1300 1307.76,1295 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="1318">    <tspan x="1180" y="1318">Standard Event Status</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="1320" x2="1315.53" y2="1320"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,1325 1317.76,1320 1307.76,1315 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="1338">    <tspan x="1180" y="1338">Service Request</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="1340" x2="1315.53" y2="1340"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,1345 1317.76,1340 1307.76,1335 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="1358">    <tspan x="1180" y="1358">Operation Status</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="1360" x2="1315.53" y2="1360"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,1365 1317.76,1360 1307.76,1355 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="1224">    <tspan x="1324" y="1224">bit 0(1)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="1244">    <tspan x="1324" y="1244">bit 1(2)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="1264">    <tspan x="1324" y="1264">bit 2(4)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="1284">    <tspan x="1324" y="1284">bit 3(8)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="1304">    <tspan x="1324" y="1304">bit 4(16)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="1324">    <tspan x="1324" y="1324">bit 5(32)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="1344">    <tspan x="1324" y="1344">bit 6(64)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1324" y="1364">    <tspan x="1324" y="1364">bit 7(128)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1180" y="1218">    <tspan x="1180" y="1218">Aux Status </tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1200" y1="1220" x2="1315.53" y2="1220"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1307.76,1225 1317.76,1220 1307.76,1215 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1334" x2="955.528" y2="1334"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1339 957.764,1334 947.764,1329 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="840" y1="1354" x2="955.528" y2="1354"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="947.764,1359 957.764,1354 947.764,1349 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1250">    <tspan x="820" y="1250">reserved</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1332">    <tspan x="820" y="1332">reserved</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="820" y="1352">    <tspan x="820" y="1352">reserved</tspan>  </text></svg>
+     <p>The QUEStionable status register set contains bits which give an indication of the quality of
+      various aspects of the measurement signal. The register set might report to the SCPI Standard 
+      Byte register bit 3 if STAT:OPER:ENAB bit mask is set active.</p>
+     
+      <svg width="600px" viewBox="659 115 642 346" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">  <g>    <rect style="fill: #ffffff" x="800" y="120" width="140" height="324"/>    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="800" y="120" width="140" height="324"/>    <text font-size="14.1111" style="fill: #000000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:700" x="931" y="278.461">      <tspan x="931" y="278.461">STAT:</tspan>      <tspan x="931" y="296.1">AUX</tspan>    </text>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="150">    <tspan x="660" y="150">Env sensor connected</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="170">    <tspan x="660" y="170">Custom cal supported</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="132" x2="795.528" y2="132"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,137 797.764,132 787.764,127 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="136">    <tspan x="804" y="136">bit 0(1)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="190">    <tspan x="660" y="190">Custom cal active</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="152" x2="795.528" y2="152"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,157 797.764,152 787.764,147 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="172" x2="795.528" y2="172"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,177 797.764,172 787.764,167 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="192" x2="795.528" y2="192"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,197 797.764,192 787.764,187 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="212" x2="795.528" y2="212"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,217 797.764,212 787.764,207 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="232" x2="795.528" y2="232"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,237 797.764,232 787.764,227 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="252" x2="795.528" y2="252"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,257 797.764,252 787.764,247 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="270">    <tspan x="660" y="270">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="272" x2="795.528" y2="272"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,277 797.764,272 787.764,267 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="290">    <tspan x="660" y="290">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="292" x2="795.528" y2="292"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,297 797.764,292 787.764,287 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="310">    <tspan x="660" y="310">CPU overheated</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="312" x2="795.528" y2="312"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,317 797.764,312 787.764,307 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="330">    <tspan x="660" y="330">Signal out of window</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="332" x2="795.528" y2="332"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,337 797.764,332 787.764,327 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="352" x2="795.528" y2="352"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,357 797.764,352 787.764,347 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="370">    <tspan x="660" y="370">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="372" x2="795.528" y2="372"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,377 797.764,372 787.764,367 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="410">    <tspan x="660" y="410">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="412" x2="795.528" y2="412"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,417 797.764,412 787.764,407 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="430">    <tspan x="660" y="430">reserved</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="432" x2="795.528" y2="432"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,437 797.764,432 787.764,427 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="156">    <tspan x="804" y="156">bit 1(2)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="176">    <tspan x="804" y="176">bit 2(4)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="196">    <tspan x="804" y="196">bit 3(8)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="216">    <tspan x="804" y="216">bit 4(16)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="236">    <tspan x="804" y="236">bit 5(32)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="256">    <tspan x="804" y="256">bit 6(64)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="276">    <tspan x="804" y="276">bit 7(128)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="296">    <tspan x="804" y="296">bit 8(256)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="316">    <tspan x="804" y="316">bit 9(512)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="336">    <tspan x="804" y="336">bit 10(1024)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="356">    <tspan x="804" y="356">bit 11(2048)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="376">    <tspan x="804" y="376">bit 12(4096)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="396">    <tspan x="804" y="396">bit 13(8192)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="416">    <tspan x="804" y="416">bit 14(16384)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="804" y="436">    <tspan x="804" y="436">bit 15(32768)</tspan>  </text>  <g>    <rect style="fill: #ffffff" x="1160" y="280" width="140" height="180"/>    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="1160" y="280" width="140" height="180"/>    <text font-size="14.1111" style="fill: #000000;text-anchor:end;font-family:sans-serif;font-style:normal;font-weight:700" x="1291" y="375.281">      <tspan x="1291" y="375.281">*STB</tspan>    </text>  </g>  <g>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="940,282 1000,282 1000,300 1155.53,300 "/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1147.76,305 1157.76,300 1147.76,295 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1020" y="318">    <tspan x="1020" y="318">Protection event </tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1020" y="338">    <tspan x="1020" y="338">Error queue state chng</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1020" y="358">    <tspan x="1020" y="358">Questionable status</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1040" y1="320" x2="1155.53" y2="320"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1147.76,325 1157.76,320 1147.76,315 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1020" y="378">    <tspan x="1020" y="378">Message Available</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1040" y1="340" x2="1155.53" y2="340"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1147.76,345 1157.76,340 1147.76,335 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1040" y1="360" x2="1155.53" y2="360"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1147.76,365 1157.76,360 1147.76,355 "/>  </g>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1040" y1="380" x2="1155.53" y2="380"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1147.76,385 1157.76,380 1147.76,375 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1020" y="398">    <tspan x="1020" y="398">Standard Event Status</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1040" y1="400" x2="1155.53" y2="400"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1147.76,405 1157.76,400 1147.76,395 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1020" y="418">    <tspan x="1020" y="418">Service Request</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1040" y1="420" x2="1155.53" y2="420"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1147.76,425 1157.76,420 1147.76,415 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1020" y="438">    <tspan x="1020" y="438">Operation Status</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1040" y1="440" x2="1155.53" y2="440"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1147.76,445 1157.76,440 1147.76,435 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1164" y="304">    <tspan x="1164" y="304">bit 0(1)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1164" y="324">    <tspan x="1164" y="324">bit 1(2)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1164" y="344">    <tspan x="1164" y="344">bit 2(4)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1164" y="364">    <tspan x="1164" y="364">bit 3(8)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1164" y="384">    <tspan x="1164" y="384">bit 4(16)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1164" y="404">    <tspan x="1164" y="404">bit 5(32)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1164" y="424">    <tspan x="1164" y="424">bit 6(64)</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="1164" y="444">    <tspan x="1164" y="444">bit 7(128)</tspan>  </text>  <g>    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="680" y1="394" x2="795.528" y2="394"/>    <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="787.764,399 797.764,394 787.764,389 "/>  </g>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="390">    <tspan x="660" y="390">reserved</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="128">    <tspan x="660" y="128">reserved</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="210">    <tspan x="660" y="210">reserved</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="230">    <tspan x="660" y="230">Battery charing</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="250">    <tspan x="660" y="250">Battery low</tspan>  </text>  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="660" y="350">    <tspan x="660" y="350">reserved</tspan>  </text></svg>
+      <p>The AUXilary register set contains state informatino about the instrument auxiliary like the 
+      NTC or power supply. The register set might report to the SCPI Standard 
+      Byte register bit 0 if STAT:OPER:ENAB bit mask is set active.</p>
+     
+    </div>
+    
+    <p><a href="#" id="foldAll">Unfold all SCPI Commands</a></p>
+    <hr>
+    <p id="None"><a href="#CLS" data-subsystem="None" class="unfoldSection">Unfold all None Commands</a></p>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="None">
+        <span class="scpi" id="CLS">CLS</span><span class="briefScpi">Clears all event registers and error queue.</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">*CLS</div>
+        <div class="details">Resets all event registers to 0. Positive transition registers are all enabled. Negative transitions are all disabled. All enable registers are also reset to 0. </div>
+        <div class="example">&gt;&gt; CLS</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="None">
+        <span class="scpi" id="ESE">ESE</span><span class="briefScpi">Programs the 8 bit wide Standard Event Enable Register</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">*ESE <div class="tooltip" data-id="0">&lt;bitmask&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="0"><span class="param">bitmask</span><span class="paramType">uint</span> <span class="paramDesc">standard even enable register bit mask.</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; ESE 2</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="None">
+        <span class="scpi" id="ESE?">ESE?</span><span class="briefScpi">Reads the 8 bit wide Standard Event Enable Register</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">*ESE?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">bitmask</span><span class="paramType">uint</span> <span class="paramDesc">standard even enable register bit mask.</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; ESE?<br />&lt;&lt; 0</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="None">
+        <span class="scpi" id="ESR?">ESR?</span><span class="briefScpi">Reads and clears the Standard Event Register</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">*ESR?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">bitmask</span><span class="paramType">uint</span> <span class="paramDesc">standard byte event register bit mask.</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; ESR?<br />&lt;&lt; 2</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="None">
+        <span class="scpi" id="IDN?">IDN?</span><span class="briefScpi">Reads the unit’s identification string</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">*IDN?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">manuf</span><span class="paramType">string</span> <span class="paramDesc">Device manufacturer name.</span></li>
+          <li><span class="param">devName</span><span class="paramType">string</span> <span class="paramDesc">Device name.</span></li>
+          <li><span class="param">serial</span><span class="paramType">string</span> <span class="paramDesc">Device serial number.</span></li>
+          <li><span class="param">version</span><span class="paramType">string</span> <span class="paramDesc">Firmware software number.</span></li>
+        </ul></div>
+
+        <div class="details">Call to query device identification string. </div>
+        <div class="example">&gt;&gt; *IDN?<br />&lt;&lt; Thorlabs,LK500,T00000002,0.0.7.1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="None">
+        <span class="scpi" id="OPC">OPC</span><span class="briefScpi">Sets the Operation Complete bit in the Standard Event Register</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">*OPC</div>
+        <div class="example">&gt;&gt; OPC 2</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="None">
+        <span class="scpi" id="OPC?">OPC?</span><span class="briefScpi">Operation complete query</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">*OPC?</div>
+        <div class="details">Places a “1” into the output queue when all device operations have been completed No real functionality on this implementation. Result is always 1. </div>
+        <div class="example">&gt;&gt; OPC?<br />&lt;&lt; 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="None">
+        <span class="scpi" id="RST">RST</span><span class="briefScpi">Resets all SCPI and sensor parameters to default</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">*RST</div>
+        <div class="details"> The command resets all SCPI parameters like serial baudrate and sensor parameters  like wavelength to defaults. Both sensor channels are reset to defaults. To reset  a single measure channel use. To reset the SCPI registers use . </div>
+        <div class="example">&gt;&gt; RST</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="None">
+        <span class="scpi" id="SRE">SRE</span><span class="briefScpi">Service request enable command</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">*SRE <div class="tooltip" data-id="1">&lt;bitmask&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="1"><span class="param">bitmask</span><span class="paramType">uint</span> <span class="paramDesc">new service request enable register bit mask.</span></li>
+        </ul></div>
+
+        <div class="details">Programs the Service Request Enable Register</div>
+        <div class="example">&gt;&gt; SRE 2</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="None">
+        <span class="scpi" id="SRE?">SRE?</span><span class="briefScpi">Service request enable query</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">*SRE?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">bitmask</span><span class="paramType">uint</span> <span class="paramDesc">service request enable register bit mask.</span></li>
+        </ul></div>
+
+        <div class="details">Reads the Service Request Enable Register</div>
+        <div class="example">&gt;&gt; SRE?<br />&lt;&lt; 0</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="None">
+        <span class="scpi" id="STB?">STB?</span><span class="briefScpi">Status byte query</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">*STB?</div>
+        <div class="details">Reads the Status Byte Register</div>
+        <div class="example">&gt;&gt; STB?<br />&lt;&lt; 20</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="None">
+        <span class="scpi" id="TST?">TST?</span><span class="briefScpi">Self-test query</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">*TST?</div>
+        <div class="details">No function always returns 0.</div>
+        <div class="example">&gt;&gt; TST?<br />&lt;&lt; 0</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="None">
+        <span class="scpi" id="WAI">WAI</span><span class="briefScpi">Wait-to-continue command</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">*WAI</div>
+        <div class="details">Wait until all previous commands are executed. Empty implementation.</div>
+        <div class="example">&gt;&gt; WAI</div>
+
+      </div>
+    </div>
+    <hr>
+    <p id="CAPT"><a href="#CAPT:INTE" data-subsystem="CAPT" class="unfoldSection">Unfold all CAPT Commands</a></p>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CAPT">
+        <span class="scpi" id="CAPT:INTE">CAPT:INTE</span><span class="briefScpi">Sets capture interval</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CAPTure:INTErval <div class="tooltip" data-id="54">&lt;interval&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="54"><span class="param">interval</span><span class="paramType">uint</span> <span class="paramDesc">interval is the multiple of PID period</span></li>
+        </ul></div>
+
+        <div class="details">Capture is based on the PID tick, it only can be multiple of PID tick, Capture Interval = interval x PID period.</div>
+        <div class="example">&gt;&gt; CAPTure:INTErval 10</div>
+        <div class="info">range from  1 to 100</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CAPT">
+        <span class="scpi" id="CAPT:INTE?">CAPT:INTE?</span><span class="briefScpi">Queries capture interval</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CAPTure:INTErval?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">interval</span><span class="paramType">uint</span> <span class="paramDesc">Capture Interval = interval x PID period</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CAPTure:INTErval?<br />&lt;&lt; 10</div>
+        <div class="info">range from 1 to 100</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CAPT">
+        <span class="scpi" id="CAPT:MOD">CAPT:MOD</span><span class="briefScpi">Sets capture state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CAPTure:MODe <div class="tooltip" data-id="52">&lt;mode&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="52"><span class="param">mode</span><span class="paramType">uint</span> <span class="paramDesc">0:Manual 1:Time 2:Samples</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CAPTure:MODe 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CAPT">
+        <span class="scpi" id="CAPT:MOD?">CAPT:MOD?</span><span class="briefScpi">Queries capture mode</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CAPTure:MODe?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">mode</span><span class="paramType">uint</span> <span class="paramDesc">0:Manual 1:Time 2:Samples</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CAPTure:MODe?<br />&lt;&lt; 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CAPT">
+        <span class="scpi" id="CAPT:ST">CAPT:ST</span><span class="briefScpi">Sets capture state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CAPTure:STate <div class="tooltip" data-id="51">&lt;state&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="51"><span class="param">state</span><span class="paramType">uint</span> <span class="paramDesc">0:disabled 1:enabled</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CAPTure:STate 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CAPT">
+        <span class="scpi" id="CAPT:ST?">CAPT:ST?</span><span class="briefScpi">Queries capture state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CAPTure:STate?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">state</span><span class="paramType">uint</span> <span class="paramDesc">0:disabled 1:enabled</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CAPTure:STate?<br />&lt;&lt; 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CAPT">
+        <span class="scpi" id="CAPT:TIM">CAPT:TIM</span><span class="briefScpi">Sets capture time</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CAPTure:TIMe <div class="tooltip" data-id="53">&lt;time&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="53"><span class="param">time</span><span class="paramType">uint</span> <span class="paramDesc">time in second. Define the time that the capture will run.</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CAPTure:TIMe 2000</div>
+        <div class="info">range from  1 to 100000</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CAPT">
+        <span class="scpi" id="CAPT:TIM?">CAPT:TIM?</span><span class="briefScpi">Queries capture time</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CAPTure:TIMe?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">time</span><span class="paramType">uint</span> <span class="paramDesc">time in second</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CAPTure:TIMe?<br />&lt;&lt; 2000</div>
+        <div class="info">range from 1 to 100000</div>
+      </div>
+    </div>
+    <hr>
+    <p id="CONT"><a href="#CONT:ANAL:EN" data-subsystem="CONT" class="unfoldSection">Unfold all CONT Commands</a></p>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:ANAL:EN">CONT:ANAL:EN</span><span class="briefScpi">Sets AnalogIn Enabled/Disabled</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:ANALoginput:ENabled <div class="tooltip" data-id="59">&lt;state&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="59"><span class="param">state</span><span class="paramType">uint</span> <span class="paramDesc">0:Disabled 1:Enabled</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:ANALoginput:ENabled 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:ANAL:EN?">CONT:ANAL:EN?</span><span class="briefScpi">Queries AnalogIn state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:ANALoginput:ENabled?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">state</span><span class="paramType">uint</span> <span class="paramDesc">0:Disabled 1:Enabled</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:ANALoginput:ENabled?<br />&lt;&lt; 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:ANAL:VOL?">CONT:ANAL:VOL?</span><span class="briefScpi">Queries TriggerIn voltage level</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:ANALoginput:VOLt?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">voltage</span><span class="paramType">float</span> <span class="paramDesc">0~5V</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:ANALoginput:VOLt?<br />&lt;&lt; 1.25</div>
+        <div class="info">range from 0 to 5.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:CYC:CI?">CONT:CYC:CI?</span><span class="briefScpi">Queries cycle info</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:CYCle:CycleInfo?</div>
+        <div class="details"> <ul class="cycle info"> <li>state<uint> 0:IDEL，1:running, 2:paused </li> <li>total time <float>min </li> <li>passed time <float>min</li> <li>stepnum<uint></li> <li>current step<uint></li> <li>cyclenum<uint></li> <li>current cycle<uint></li> <li>setup temp<float>, Resolution as 0.1 </li> <li>actual temmp<float>, Resolution as 0.01 </li> </ul> \~info:</div>
+        <div class="example">&gt;&gt; CONTrol:CYCle:CycleInfo?<br />&lt;&lt; 0,1000,500,56,28,3,2,23.2,22.21</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:CYC:CYCN">CONT:CYC:CYCN</span><span class="briefScpi">Sets cycle number</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:CYCle:CYCNum <div class="tooltip" data-id="65">&lt;cyclenum&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="65"><span class="param">cyclenum</span><span class="paramType">uint</span> <span class="paramDesc">is the repeat times</span></li>
+        </ul></div>
+
+        <div class="details">setup cycle number, invalid during cycle running</div>
+        <div class="example">&gt;&gt; CONTrol:CYCle:CYCNum 10</div>
+        <div class="info">range from  1 to 100</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:CYC:CYCN?">CONT:CYC:CYCN?</span><span class="briefScpi">Queries cycle number</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:CYCle:CYCNum?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">cycle</span><span class="paramType">uint</span> <span class="paramDesc"></span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:CYCle:CYCNum?<br />&lt;&lt; 10</div>
+        <div class="info">range from 1 to 100</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:CYC:HAL">CONT:CYC:HAL</span><span class="briefScpi">Sets cycle halt state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:CYCle:HALt <div class="tooltip" data-id="68">&lt;state&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="68"><span class="param">state</span><span class="paramType">uint</span> <span class="paramDesc">0:disabled 1:enabled</span></li>
+        </ul></div>
+
+        <div class="details">setup cycle halt state, invalid during cycle running</div>
+        <div class="example">&gt;&gt; CONTrol:CYCle:HALt 1</div>
+        <div class="info">range from  0 , 1</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:CYC:HAL?">CONT:CYC:HAL?</span><span class="briefScpi">Queries cycle halt state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:CYCle:HALt?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">state</span><span class="paramType">uint</span> <span class="paramDesc">0:disabled 1:enabled</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:CYCle:HALt?<br />&lt;&lt; 1</div>
+        <div class="info">range from 0 , 1</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:CYC:S?">CONT:CYC:S?</span><span class="briefScpi">Queries cycle state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:CYCle:State?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">state</span><span class="paramType">uint</span> <span class="paramDesc">0:disabled 1:enabled</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:CYCle:State?<br />&lt;&lt; 1</div>
+        <div class="info">range from 0 , 1</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:CYC:STEPI">CONT:CYC:STEPI</span><span class="briefScpi">Sets step info</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:CYCle:STEPInfo ramptime,holdtime,holdtemp,RunMode</div>
+        <div class="details">setup step info, invalid during cycle running <ul class="step get info"> <li>ramptime <uint> 0~6000min</li> <li>holdtime <uint> 0~6000min</li> <li>holdtemp<float> -5~45</li> <li>RunMode<uint8> 0-1</li> </ul></div>
+        <div class="example">&gt;&gt; CONTrol:CYCle:STEPInfo 1000, 1000, 24.5, 1</div>
+        <div class="info">0~6000 min, 0~6000 min, -5~45 cel, 0-1</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:CYC:STEPI?">CONT:CYC:STEPI?</span><span class="briefScpi">Queries step info</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:CYCle:STEPInfo?</div>
+        <div class="details"> <ul class="step info"> <li>ramptime <uint> 0~6000min</li> <li>holdtime <uint> 0~6000min</li> <li>holdtemp<float> -5~45</li> <li>RunMode<uint8> 0-1</li> </ul></div>
+        <div class="example">&gt;&gt; CONTrol:CYCle:STEPInfo?<br />&lt;&lt; 100, 100, 25.2, 1</div>
+        <div class="info">0~6000 min, 0~6000 min, -5~45 cel, 0-1</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:CYC:STEPN">CONT:CYC:STEPN</span><span class="briefScpi">Sets step number</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:CYCle:STEPNum <div class="tooltip" data-id="66">&lt;stepnum&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="66"><span class="param">stepnum</span><span class="paramType">uint</span> <span class="paramDesc">is the step in one cycle</span></li>
+        </ul></div>
+
+        <div class="details">setup step number, invalid during cycle running</div>
+        <div class="example">&gt;&gt; CONTrol:CYCle:STEPNum 30</div>
+        <div class="info">range from  1 to 100</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:CYC:STEPN?">CONT:CYC:STEPN?</span><span class="briefScpi">Queries step number</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:CYCle:STEPNum?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">step</span><span class="paramType">uint</span> <span class="paramDesc"></span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:CYCle:STEPNum?<br />&lt;&lt; 30</div>
+        <div class="info">range from 1 to 100</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:CYC:STEPS">CONT:CYC:STEPS</span><span class="briefScpi">Sets select step number</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:CYCle:STEPSel <div class="tooltip" data-id="67">&lt;stepsel&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="67"><span class="param">stepsel</span><span class="paramType">uint</span> <span class="paramDesc">is the step can be edited</span></li>
+        </ul></div>
+
+        <div class="details">setup select step number, invalid during cycle running</div>
+        <div class="example">&gt;&gt; CONTrol:CYCle:STEPSel 30</div>
+        <div class="info">range from  1 to 100</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:CYC:STEPS?">CONT:CYC:STEPS?</span><span class="briefScpi">Queries select step number</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:CYCle:STEPSel?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">step</span><span class="paramType">uint</span> <span class="paramDesc"></span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:CYCle:STEPSel?<br />&lt;&lt; 12</div>
+        <div class="info">range from 1 to 100</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:DRV:FANDR">CONT:DRV:FANDR</span><span class="briefScpi">Sets fan driver mode</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:DRViver:FANDRiver <div class="tooltip" data-id="45">&lt;mode&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="45"><span class="param">mode</span><span class="paramType">uint</span> <span class="paramDesc">0:Auto 1:MAX</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:DRViver:FANDRiver 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:DRV:FANDR?">CONT:DRV:FANDR?</span><span class="briefScpi">Queriesfan fan driver mode</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:DRViver:FANDRiver?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">mode</span><span class="paramType">uint</span> <span class="paramDesc">0:Auto 1:MAX</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:DRViver:FANDRiver?<br />&lt;&lt; 0</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:DRV:PUMPDR">CONT:DRV:PUMPDR</span><span class="briefScpi">Sets Pump Driver level</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:DRViver:PUMPDRiver <div class="tooltip" data-id="46">&lt;level&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="46"><span class="param">level</span><span class="paramType">uint</span> <span class="paramDesc">0-10% 1-20% 2-30% 3-40% 4-50% 5-60% 6-70% 7-80% 8-90% 9-100%</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:DRViver:PUMPDRiver 1</div>
+        <div class="info">range from  0 to 9</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:DRV:PUMPDR?">CONT:DRV:PUMPDR?</span><span class="briefScpi">Queries Pump Driver level</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:DRViver:PUMPDRiver?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">level</span><span class="paramType">uint</span> <span class="paramDesc">0-10% 1-20% 2-30% 3-40% 4-50% 5-60% 6-70% 7-80% 8-90% 9-100%</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:DRViver:PUMPDRiver?<br />&lt;&lt; 0</div>
+        <div class="info">range from 0 to 9</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:OUTP:STAT">CONT:OUTP:STAT</span><span class="briefScpi">Sets Output State</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:OUTPut:STATe</div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="44"><span class="param">onoff</span><span class="paramType">uint</span> <span class="paramDesc">0:off 1:on</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:OUTPut:STATe</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:OUTP:STAT?">CONT:OUTP:STAT?</span><span class="briefScpi">Queries Output State</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:OUTPut:STATe?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">onoff</span><span class="paramType">uint</span> <span class="paramDesc">0:off 1:on</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:OUTPut:STATe?<br />&lt;&lt; 0</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:OUTP:WORK">CONT:OUTP:WORK</span><span class="briefScpi">Sets Work Mode</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:OUTPut:WORKmode <div class="tooltip" data-id="58">&lt;workmode&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="58"><span class="param">workmode</span><span class="paramType">uint</span> <span class="paramDesc">0:Cooler 1:Heater</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:OUTPut:WORKmode 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:OUTP:WORK?">CONT:OUTP:WORK?</span><span class="briefScpi">Queries Work Mode</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:OUTPut:WORKmode?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">workmode</span><span class="paramType">uint</span> <span class="paramDesc">0:Cooler 1:Heater</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:OUTPut:WORKmode?<br />&lt;&lt; 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:COOL:KP">CONT:PID:COOL:KP</span><span class="briefScpi">Sets Cooling mode PID Kp</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:COOLing:KP <div class="tooltip" data-id="47">&lt;value&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="47"><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Proportion of PID</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:COOLing:KP 1.25</div>
+        <div class="info">range from  0.01 to 1000.0</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:COOL:KP?">CONT:PID:COOL:KP?</span><span class="briefScpi">Queries Cooling mode PID Kp</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:COOLing:KP?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Proportion of PID</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:COOLing:KP?<br />&lt;&lt; 1.25</div>
+        <div class="info">range from 0.01 to 1000.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:COOL:PER">CONT:PID:COOL:PER</span><span class="briefScpi">Sets Cooling mode PID period value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:COOLing:PERiod <div class="tooltip" data-id="50">&lt;value&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="50"><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Period of PID, unit as Second</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:COOLing:PERiod 1.25</div>
+        <div class="info">range from  1.000 to 100.000</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:COOL:PER?">CONT:PID:COOL:PER?</span><span class="briefScpi">Queries Cooling mode PID period value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:COOLing:PERiod?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Period of PID, unit as Second</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:COOLing:PERiod?<br />&lt;&lt; 1.250</div>
+        <div class="info">range from 1.000 to 100.000</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:COOL:TD">CONT:PID:COOL:TD</span><span class="briefScpi">Sets Cooling mode PID Td value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:COOLing:TD <div class="tooltip" data-id="49">&lt;value&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="49"><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Derivative Time of PID</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:COOLing:TD 1.25</div>
+        <div class="info">range from  0.01 to 1000.0</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:COOL:TD?">CONT:PID:COOL:TD?</span><span class="briefScpi">Queries Cooling mode PID Td value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:COOLing:TD?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">Td value</span><span class="paramType">float</span> <span class="paramDesc">Derivative Time of PID</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:COOLing:TD?<br />&lt;&lt; 1.25</div>
+        <div class="info">range from 0.01 to 1000.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:COOL:TI">CONT:PID:COOL:TI</span><span class="briefScpi">Sets Cooling mode PID Ti value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:COOLing:TI <div class="tooltip" data-id="48">&lt;value&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="48"><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Integral Time of PID</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:COOLing:TI 1.25</div>
+        <div class="info">range from  0.01 to 1000.0</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:COOL:TI?">CONT:PID:COOL:TI?</span><span class="briefScpi">Queries Cooling mode PID Ti value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:COOLing:TI?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Integral Time of PID</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:COOLing:TI?<br />&lt;&lt; 1.25</div>
+        <div class="info">range from 0.01 to 1000.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:HEAT:KP">CONT:PID:HEAT:KP</span><span class="briefScpi">Sets Heating mode PID Kp</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:HEATing:KP <div class="tooltip" data-id="61">&lt;value&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="61"><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Proportion of PID</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:HEATing:KP 1.25</div>
+        <div class="info">range from  0.01 to 1000.0</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:HEAT:KP?">CONT:PID:HEAT:KP?</span><span class="briefScpi">Queries Heating mode PID Kp</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:HEATing:KP?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Proportion of PID</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:HEATing:KP?<br />&lt;&lt; 1.25</div>
+        <div class="info">range from 0.01 to 1000.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:HEAT:PER">CONT:PID:HEAT:PER</span><span class="briefScpi">Sets Heating mode PID period value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:HEATing:PERiod <div class="tooltip" data-id="64">&lt;value&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="64"><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Period of PID, unit as Second</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:HEATing:PERiod 1.250</div>
+        <div class="info">range from  1.000 to 100.000</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:HEAT:PER?">CONT:PID:HEAT:PER?</span><span class="briefScpi">Queries Heating mode PID period value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:HEATing:PERiod?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Period of PID, unit as Second</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:HEATing:PERiod?<br />&lt;&lt; 1.250</div>
+        <div class="info">range from 1.000 to 100.000</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:HEAT:TD">CONT:PID:HEAT:TD</span><span class="briefScpi">Sets Heating mode PID Td value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:HEATing:TD <div class="tooltip" data-id="63">&lt;value&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="63"><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Derivative Time of PID</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:HEATing:TD 1.25</div>
+        <div class="info">range from  0.01 to 1000.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:HEAT:TD?">CONT:PID:HEAT:TD?</span><span class="briefScpi">Queries Heating mode PID Td value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:HEATing:TD?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">Td value</span><span class="paramType">float</span> <span class="paramDesc">Derivative Time of PID</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:HEATing:TD?<br />&lt;&lt; 1.25</div>
+        <div class="info">range from 0.01 to 1000.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:HEAT:TI">CONT:PID:HEAT:TI</span><span class="briefScpi">Sets Heating mode PID Ti value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:HEATing:TI <div class="tooltip" data-id="62">&lt;value&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="62"><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Integral Time of PID</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:HEATing:TI 1.25</div>
+        <div class="info">range from  0.01 to 1000.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:PID:HEAT:TI?">CONT:PID:HEAT:TI?</span><span class="briefScpi">Queries Heating mode PID Ti value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:PID:HEATing:TI?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">value</span><span class="paramType">float</span> <span class="paramDesc">Integral Time of PID</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:PID:HEATing:TI?<br />&lt;&lt; 1.25</div>
+        <div class="info">range from 0.01 to 1000.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:RUNM">CONT:RUNM</span><span class="briefScpi">Sets RunMode state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:RUNMode <div class="tooltip" data-id="69">&lt;state&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="69"><span class="param">state</span><span class="paramType">uint</span> <span class="paramDesc">0:CONSTANT 1:CYCLE</span></li>
+        </ul></div>
+
+        <div class="details">setup RunMode state</div>
+        <div class="example">&gt;&gt; CONTrol:RUNMode 1</div>
+        <div class="info">range from  0 , 1</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:RUNM?">CONT:RUNM?</span><span class="briefScpi">Queries cycle halt state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:RUNMode?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">state</span><span class="paramType">uint</span> <span class="paramDesc">0:CONSTANT T 1:PAUSE</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:RUNMode?<br />&lt;&lt; 1</div>
+        <div class="info">range from 0 , 1</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:TEMP:ERRW">CONT:TEMP:ERRW</span><span class="briefScpi">Sets error window</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:TEMPerature:ERRWin <div class="tooltip" data-id="57">&lt;errwin&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="57"><span class="param">errwin</span><span class="paramType">float</span> <span class="paramDesc">errwin is a range which actural temperature should stay inside</span></li>
+        </ul></div>
+
+        <div class="details">When the actural temperature is out of the error window, a warning will triggered.</div>
+        <div class="example">&gt;&gt; CONTrol:TEMPerature:ERRWin 10.0</div>
+        <div class="info">range from  0.0 to 10.0</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:TEMP:ERRW?">CONT:TEMP:ERRW?</span><span class="briefScpi">Queries error window</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:TEMPerature:ERRWin?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">errwin</span><span class="paramType">float</span> <span class="paramDesc">errwin is a range which actural temperature should stay inside</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:TEMPerature:ERRWin?<br />&lt;&lt; 0.1</div>
+        <div class="info">range from 0.0 to 10.0</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:TEMP:SPO">CONT:TEMP:SPO</span><span class="briefScpi">Sets target temperature in float</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:TEMPerature:SPOint</div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="34"><span class="param">temperature</span><span class="paramType">float</span> <span class="paramDesc">temperature in float between -5.0 and 45.0</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:TEMPerature:SPOint 30.0</div>
+        <div class="info">range from -5.0 to 45.0</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:TEMP:SPO?">CONT:TEMP:SPO?</span><span class="briefScpi">Queries target temperature in float</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:TEMPerature:SPOint?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">temperature</span><span class="paramType">float</span> <span class="paramDesc">temperature in float between -5.0 and 45.0</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:TEMPerature?<br />&lt;&lt; 25.0</div>
+        <div class="info">range from -5.0 to 45.0</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:TRIG:EN">CONT:TRIG:EN</span><span class="briefScpi">Sets Trigger Enabled/Disabled</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:TRIGger:ENabled <div class="tooltip" data-id="60">&lt;state&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="60"><span class="param">state</span><span class="paramType">uint</span> <span class="paramDesc">0:Disabled 1:Enabled</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:TRIGger:ENabled 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:TRIG:EN?">CONT:TRIG:EN?</span><span class="briefScpi">Queries Trigger state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:TRIGger:ENabled?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">state</span><span class="paramType">uint</span> <span class="paramDesc">0:Disabled 1:Enabled</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:TRIGger:ENabled?<br />&lt;&lt; 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="CONT">
+        <span class="scpi" id="CONT:TRIG:LE?">CONT:TRIG:LE?</span><span class="briefScpi">Queries trigger level</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">CONTrol:TRIGger:LEvel?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">level</span><span class="paramType">uint</span> <span class="paramDesc">0:Height 1:Low</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; CONTrol:TRIGger:LEvel?<br />&lt;&lt; 1</div>
+
+      </div>
+    </div>
+    <hr>
+    <p id="DISP"><a href="#DISP:BRIG" data-subsystem="DISP" class="unfoldSection">Unfold all DISP Commands</a></p>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="DISP">
+        <span class="scpi" id="DISP:BRIG">DISP:BRIG</span><span class="briefScpi">Sets display brightness in percent</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">DISPlay:BRIGhtness <div class="tooltip" data-id="2">&lt;brightness&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="2"><span class="param">brightness</span><span class="paramType">float</span> <span class="paramDesc">brightness in percent between 0 and 1</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; DISP:BRIG 0.5</div>
+        <div class="info">Only 31 different brightness levels are supported.</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="DISP">
+        <span class="scpi" id="DISP:BRIG?">DISP:BRIG?</span><span class="briefScpi">Queries display brightness in percent</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">DISPlay:BRIGhtness?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">brightness</span><span class="paramType">float</span> <span class="paramDesc">Brightness in percent between 0 and 1</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; DISP:BRIG?<br />&lt;&lt; 0.91</div>
+        <div class="info">Only 31 different brightness levels are supported.</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="DISP">
+        <span class="scpi" id="DISP:DARK">DISP:DARK</span><span class="briefScpi">Enables or disables display light of device</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">DISPlay:DARKmode state</div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="56"><span class="param">state</span><span class="paramType">bool</span> <span class="paramDesc">1:Enabled 0:Disbaled.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to enable or disable display light of the device. Also can be done by shortcut BUTTON1 + BUTTON4.BUTTON1 is the  top button.</div>
+        <div class="example">&gt;&gt; DISPlay:DARKmode 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="DISP">
+        <span class="scpi" id="DISP:DARK?">DISP:DARK?</span><span class="briefScpi">Tests if Darkmode is enabled</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">DISPlay:DARKmode?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">state</span><span class="paramType">bool</span> <span class="paramDesc">1:Enabled 0:Disbaled.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to enable or disable display light of the device. Also can be done by shortcut BUTTON1 + BUTTON4.BUTTON1 is the  top button.</div>
+        <div class="example">&gt;&gt; DISPlay:DARKmode?<br />&lt;&lt; 1</div>
+
+      </div>
+    </div>
+    <hr>
+    <p id="SEN"><a href="#SEN:AMB:HUM?" data-subsystem="SEN" class="unfoldSection">Unfold all SEN Commands</a></p>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:AMB:HUM?">SEN:AMB:HUM?</span><span class="briefScpi">Queries ambient humidity in float</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:AMBient:HUMidity?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">humidity</span><span class="paramType">float</span> <span class="paramDesc">humidity in float between 0.00 and 1.00</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:AMBient:HUMidity?<br />&lt;&lt; 0.51</div>
+        <div class="info">range from 0.00 to 1.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:AMB:TEMP?">SEN:AMB:TEMP?</span><span class="briefScpi">Queries ambient temperature in float</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:AMBient:TEMPerature?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">temperature</span><span class="paramType">float</span> <span class="paramDesc">temperature in float between -10.00 and 60.00</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:AMBient:TEMPerature?<br />&lt;&lt; 25.00</div>
+        <div class="info">range from -10.00 to 60.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:FLO?">SEN:FLO?</span><span class="briefScpi">Queries ambient flow in float,unit as Lpm</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:FLOw?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">flow</span><span class="paramType">float</span> <span class="paramDesc">flow in float between 0.00 Lpm and 3.00 Lpm</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:FLOw?<br />&lt;&lt; 0.51</div>
+        <div class="info">range from 0.00 to 3.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:PRE?">SEN:PRE?</span><span class="briefScpi">Queries ambient humidity in float</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:PREssure?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">pressure</span><span class="paramType">float</span> <span class="paramDesc">pressure in float between 0.00 bar and 3.00 bar</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:PREssure?<br />&lt;&lt; 0.51</div>
+        <div class="info">range from 0.00 to 3.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:A">SEN:TEMP:A</span><span class="briefScpi">Sets NTC sensor A value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:Apara</div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="41"><span class="param">A value</span><span class="paramType">float</span> <span class="paramDesc">-9.9999 to 9.9999</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:Apara</div>
+        <div class="info">range from -9.9999 to 9.9999</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:A?">SEN:TEMP:A?</span><span class="briefScpi">Queries NTC sensor A value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:Apara?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">A value</span><span class="paramType">float</span> <span class="paramDesc">-9.9999 to 9.9999</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:Apara?<br />&lt;&lt; 0</div>
+        <div class="info">range from -9.9999 to 9.9999</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:ACT?">SEN:TEMP:ACT?</span><span class="briefScpi">Queries actual temperature in float</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:ACTualtemp?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">temperature</span><span class="paramType">float</span> <span class="paramDesc">temperature in float between -10.00 and 60.00</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:ACTualtemp?<br />&lt;&lt; 25.00</div>
+        <div class="info">range from -10.00 to 60.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:B">SEN:TEMP:B</span><span class="briefScpi">Sets NTC sensor B value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:Bpara</div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="42"><span class="param">B value</span><span class="paramType">float</span> <span class="paramDesc">-9.9999 to 9.9999</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:Bpara</div>
+        <div class="info">range from -9.9999 to 9.9999</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:B?">SEN:TEMP:B?</span><span class="briefScpi">Queries NTC sensor B value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:Bpara?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">B value</span><span class="paramType">float</span> <span class="paramDesc">-9.9999 to 9.9999</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:Bpara?<br />&lt;&lt; 0</div>
+        <div class="info">range from -9.9999 to 9.9999</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:BETA">SEN:TEMP:BETA</span><span class="briefScpi">Sets NTC sensor beat value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:BETA</div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="39"><span class="param">beta value</span><span class="paramType">uint</span> <span class="paramDesc">1 to 10000</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:BETA 3950</div>
+        <div class="info">range from 1 to 10000</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:BETA?">SEN:TEMP:BETA?</span><span class="briefScpi">Queries NTC sensor beat value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:BETA?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">Beta value</span><span class="paramType">uint</span> <span class="paramDesc">1 to 10000</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:BETA?<br />&lt;&lt; 0</div>
+        <div class="info">range from 1 to 10000</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:C">SEN:TEMP:C</span><span class="briefScpi">Sets NTC sensor C value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:Cpara</div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="43"><span class="param">C value</span><span class="paramType">float</span> <span class="paramDesc">-9.9999 to 9.9999</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:Cpara</div>
+        <div class="info">range from -9.9999 to 9.9999</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:C?">SEN:TEMP:C?</span><span class="briefScpi">Queries NTC sensor C value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:Cpara?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">C value</span><span class="paramType">float</span> <span class="paramDesc">-9.9999 to 9.9999</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:Cpara?<br />&lt;&lt; 0</div>
+        <div class="info">range from -9.9999 to 9.9999</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:COEFFT">SEN:TEMP:COEFFT</span><span class="briefScpi">Sets temperature sensor coefficient type</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:COEFFType</div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="38"><span class="param">coefficient type</span><span class="paramType">uint</span> <span class="paramDesc">0:Beta 1:Steinhart-Hart</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:COEFFType 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:COEFFT?">SEN:TEMP:COEFFT?</span><span class="briefScpi">Queries temperature sensor coefficient type</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:COEFFType?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">coefficient type</span><span class="paramType">uint</span> <span class="paramDesc">0:Beta 1:Steinhart-Hart</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:COEFFType?<br />&lt;&lt; 0</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:IN?">SEN:TEMP:IN?</span><span class="briefScpi">Queries income temperature in float</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:INcome?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">temperature</span><span class="paramType">float</span> <span class="paramDesc">temperature in float between -10.0 and 60.0</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:INcome?<br />&lt;&lt; 25.00</div>
+        <div class="info">range from -10.00 to 60.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:NTCT">SEN:TEMP:NTCT</span><span class="briefScpi">Sets temperature sensor NTC type</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:NTCType</div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="37"><span class="param">NTCType</span><span class="paramType">uint</span> <span class="paramDesc">0:TSP-TH 1:Others</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:NTCType 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:NTCT?">SEN:TEMP:NTCT?</span><span class="briefScpi">Queries temperature sensor NTC type</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:NTCType?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">NTCType</span><span class="paramType">uint</span> <span class="paramDesc">0:TSP-TH 1:Others</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:NTCType?<br />&lt;&lt; 0</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:OUT?">SEN:TEMP:OUT?</span><span class="briefScpi">Queries outcome temperature in float</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:OUTcome?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">temperature</span><span class="paramType">float</span> <span class="paramDesc">temperature in float between -10.00 and 60.00</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:OUTcome?<br />&lt;&lt; 25.00</div>
+        <div class="info">range from -10.00 to 60.00</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:R25">SEN:TEMP:R25</span><span class="briefScpi">Sets NTC sensor beat value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:R25</div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="40"><span class="param">beta value</span><span class="paramType">uint</span> <span class="paramDesc">1 to 10000</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:R25 10</div>
+        <div class="info">range from 1 to 10000</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:R25?">SEN:TEMP:R25?</span><span class="briefScpi">Queries NTC sensor beat value</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:R25?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">Beta value</span><span class="paramType">uint</span> <span class="paramDesc">1 to 10000</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:R25?<br />&lt;&lt; 0</div>
+        <div class="info">range from 1 to 10000</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:SOUR">SEN:TEMP:SOUR</span><span class="briefScpi">Sets temperature sensor source</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:SOURce</div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="36"><span class="param">SensorSource</span><span class="paramType">uint</span> <span class="paramDesc">0:Inner 1:Ext</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:SOURce 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:SOUR?">SEN:TEMP:SOUR?</span><span class="briefScpi">Queries temperature sensor source</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:SOURce?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">SensorSource</span><span class="paramType">uint</span> <span class="paramDesc">0:Inner 1:Ext</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:SOURce?<br />&lt;&lt; 0</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:UNIT">SEN:TEMP:UNIT</span><span class="briefScpi">Sets temperature unit</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:UNIT</div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="35"><span class="param">unit</span><span class="paramType">uint</span> <span class="paramDesc">0: Celsius 1: Fahrenheit 2: Kelvins</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:UNIT 1</div>
+        <div class="info">range from 0 to 2</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SEN">
+        <span class="scpi" id="SEN:TEMP:UNIT?">SEN:TEMP:UNIT?</span><span class="briefScpi">Queries temperature unit</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SENsor:TEMPerature:UNIT?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">unit</span><span class="paramType">uint</span> <span class="paramDesc">0: Celsius 1: Fahrenheit 2: Kelvins</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SENsor:TEMPerature:UNIT?<br />&lt;&lt; 0</div>
+        <div class="info">range from 0 to 2</div>
+      </div>
+    </div>
+    <hr>
+    <p id="SYST"><a href="#SYST:BEEP" data-subsystem="SYST" class="unfoldSection">Unfold all SYST Commands</a></p>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:BEEP">SYST:BEEP</span><span class="briefScpi">Plays a short beep</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:BEEPer[:IMMediate]</div>
+        <div class="details">Use this command to play a short beep. The command starts playing the tone in background and returns immediately. </div>
+        <div class="example">&gt;&gt; SYST:BEEP</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:ADDR">SYST:COMM:LAN:ADDR</span><span class="briefScpi">Changes IPv4 address of device</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:ADDRess <div class="tooltip" data-id="16">&lt;address&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="16"><span class="param">address</span><span class="paramType">string</span> <span class="paramDesc">IPv4 address string. Bytes separated by fullstop.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to change IPv4 address of device. If DHCP is enabled the function simply updates the static IPv4 address without applying configuration to the network interface. If DHCP is disabled the command also applies configuration to the network interface.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:ADDR "10.10.3.123"</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:ADDR?">SYST:COMM:LAN:ADDR?</span><span class="briefScpi">Queries IPv4 address of device</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:ADDRess?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">address</span><span class="paramType">string</span> <span class="paramDesc">IPv4 address string. Bytes separated by fullstop.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to query IPv4 address of device. If DHCP is enabled and no IP has been assigned yet the result might be "0.0.0.0". If DHCP is disabled the static IPv4 address will be returned. To test if </div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:ADDR?<br />&lt;&lt; "10.10.3.123"</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:DFU:POR">SYST:COMM:LAN:DFU:POR</span><span class="briefScpi">Sets a new Ethernet port for the DFU server</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:DFU:PORt <div class="tooltip" data-id="22">&lt;port&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="22"><span class="param">port</span><span class="paramType">uint</span> <span class="paramDesc">new port number. 0 to disable service. Default it 27007.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to change the Ethernet port number of the DFU( Device Firmware Update) server. The server allows updating the device firmwares via Ethernet. You can use port number 0 to disable the service. Once the port number is changed a reboot of the device is mandatory to apply new server settings.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:DFU:POR 20002</div>
+        <div class="note">Requires reboot of device.</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:DFU:POR?">SYST:COMM:LAN:DFU:POR?</span><span class="briefScpi">Queries Ethernet port for the DFU server</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:DFU:PORt?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">port</span><span class="paramType">uint</span> <span class="paramDesc">new port number. 0 to disable service. Default it 27007.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to query the Ethernet port number of the DFU( Device Firmware Update) server. The server allows updating the device firmwares via Ethernet. For closer details read <a class="linkSCPI" title="Sets a new Ethernet port for the DFU server" href="#SYST:COMM:LAN:DFU:POR">SYST:COMM:LAN:DFU:POR</a>.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:DFU:POR?<br />&lt;&lt; 2022</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:DHCP">SYST:COMM:LAN:DHCP</span><span class="briefScpi">Enables or disables DHCP of device</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:DHCP <div class="tooltip" data-id="18">&lt;state&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="18"><span class="param">state</span><span class="paramType">bool</span> <span class="paramDesc">1 to enable DHCP. 0 to apply static IP configuration.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to enable or disable DHCP client of the device. When enabled the IP address is assigned at runtime by any Dynamic Host Configuration Protocol (DHCP) Server in LAN. When DHCP is disabled the static IP configuration is used. Use  <a class="linkSCPI" title="Changes IPv4 address of device" href="#SYST:COMM:LAN:ADDR">SYST:COMM:LAN:ADDR</a> and <a class="linkSCPI" title="Changes IPv4 netmask of device" href="#SYST:COMM:LAN:SMAS">SYST:COMM:LAN:SMAS</a> to apply static IP configuration. Once a IP address has been assigned by DHCP server you can use <a class="linkSCPI" title="Queries IPv4 address of device" href="#SYST:COMM:LAN:ADDR?">SYST:COMM:LAN:ADDR?</a> to query the address.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:DHCP 1</div>
+        <div class="note">Disabling DHCP will automatically apply static IP configuration. It is best practice to configure static IP fist.</div>
+        <div class="info">When enabling DHCP it may take awhile until IP address is assigned.</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:DHCP?">SYST:COMM:LAN:DHCP?</span><span class="briefScpi">Tests if DHCP is enabled</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:DHCP?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">state</span><span class="paramType">bool</span> <span class="paramDesc">1 when DHCP is enabled. 0 for static IP configuration.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to test if DHCP is enabled or disabled. When enabled the IP address is assigned at runtime by any Dynamic Host Configuration Protocol (DHCP) Server in LAN. When DHCP is disabled the static IP configuration is used. For closer details read <a class="linkSCPI" title="Enables or disables DHCP of device" href="#SYST:COMM:LAN:DHCP">SYST:COMM:LAN:DHCP</a>.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:DHCP?<br />&lt;&lt; 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:HOST">SYST:COMM:LAN:HOST</span><span class="briefScpi">Sets a new hostname for the device</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:HOSTname <div class="tooltip" data-id="19">&lt;name&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="19"><span class="param">name</span><span class="paramType">string</span> <span class="paramDesc">new device hostname. The maximum length of the hostname string is limited to 15.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to change the hostname for the device. The hostname can be used to customize the device name. It is displayed during boot to identify device. It may also be used in network as alias for IP address. This feature requires NetBIOS protocol to be enabled in LAN. Be aware not all characters are allowed in hostname string. DO NOT USE "space, slash, backslash, colon, semicolon, question mark, asterisk, smaller, bigger, pipe".</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:HOST "test"</div>
+        <div class="note">Requires reboot of device.</div>
+        <div class="info">Hostname resolution in LAN works only if NetBIOS protocol is enabled.</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:HOST?">SYST:COMM:LAN:HOST?</span><span class="briefScpi">Queries hostname of the device</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:HOSTname?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">name</span><span class="paramType">string</span> <span class="paramDesc">new device hostname.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to query the hostname of the device. The hostname can be used to customize the device name. It is displayed during boot to identify device. It may also be used in network as alias for IP address. This feature requires NetBIOS protocol to be enabled in LAN.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:SCPI:HOST?<br />&lt;&lt; "Test_01"</div>
+        <div class="info">Hostname resolution in LAN works only if NetBIOS protocol is enabled.</div>
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:MAC?">SYST:COMM:LAN:MAC?</span><span class="briefScpi">Queries MAC address of device</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:MAC?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">hexStr</span><span class="paramType">string</span> <span class="paramDesc">MAC address as hex string. Bytes separated by colon.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to query MAC address of device as hex string.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:MAC?<br />&lt;&lt; "98:27:82:D0:00:0F"</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:PROP">SYST:COMM:LAN:PROP</span><span class="briefScpi">Enables/Disables LAN service propagation</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:PROPagation <div class="tooltip" data-id="23">&lt;enable&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="23"><span class="param">enable</span><span class="paramType">bool</span> <span class="paramDesc">1 to enable service propagation. False to disable</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to enable/disable sending response on service propagation request  UDP broadcast on port 270378. If disabled the device can not longer be found by network search triggered by FindResources. If the IP address is known a connection might be established regardless if this switch is enabled or disabled. </div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:PROP 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:PROP?">SYST:COMM:LAN:PROP?</span><span class="briefScpi">Tests if service propagation is active or not</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:PROPagation?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">enable</span><span class="paramType">bool</span> <span class="paramDesc">1 to enable service propagation. False to disable</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to test if sending response for service propagation request  is enabled or disabled. For closer details read <a class="linkSCPI" title="Enables/Disables LAN service propagation" href="#SYST:COMM:LAN:PROP">SYST:COMM:LAN:PROP</a>.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:PROP?<br />&lt;&lt; 0</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:SCPI:POR">SYST:COMM:LAN:SCPI:POR</span><span class="briefScpi">Sets a Ethernet new port for the SCPI server</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:SCPI:PORt <div class="tooltip" data-id="21">&lt;port&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="21"><span class="param">port</span><span class="paramType">uint</span> <span class="paramDesc">new port number. 0 to disable service. Default it 2000.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to change the Ethernet port number of the SCPI server. The server allows sending SCPI commands via Ethernet. You can use port number 0 to disable the service. Once the port number is changed a reboot of the device is mandatory to apply new server settings.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:SCPI:POR 2001</div>
+        <div class="note">Requires reboot of device.</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:SCPI:POR?">SYST:COMM:LAN:SCPI:POR?</span><span class="briefScpi">Queries Ethernet port for the SCPI server</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:SCPI:PORt?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">port</span><span class="paramType">uint</span> <span class="paramDesc">new port number. 0 to disable service. Default it 2000.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to query the Ethernet port number of the SCPI server. The server allows sending SCPI commands via Ethernet. For closer details read <a class="linkSCPI" title="Sets a Ethernet new port for the SCPI server" href="#SYST:COMM:LAN:SCPI:POR">SYST:COMM:LAN:SCPI:POR</a>.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:SCPI:POR?<br />&lt;&lt; 2001</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:SMAS">SYST:COMM:LAN:SMAS</span><span class="briefScpi">Changes IPv4 netmask of device</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:SMASk <div class="tooltip" data-id="17">&lt;netmask&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="17"><span class="param">netmask</span><span class="paramType">string</span> <span class="paramDesc">IPv4 netmask string. Bytes separated by fullstop.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to change IPv4 netmask of device. If DHCP is enabled the function simply updates the static IPv4 netmask without applying configuration to the network interface. If DHCP is disabled the command also applies configuration to the network interface.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:SMAS "255.255.255.128"</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:SMAS?">SYST:COMM:LAN:SMAS?</span><span class="briefScpi">Queries IPv4 netmask of device</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:SMASk?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">netmask</span><span class="paramType">string</span> <span class="paramDesc">IPv4 netmask string. Bytes separated by fullstop.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to query IPv4 netmask of device. If DHCP is enabled and no IP has been assigned yet the result might be "0.0.0.0". If DHCP is disabled the static IPv4 netmask will be returned.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:SMAS?<br />&lt;&lt; "255.255.255.0"</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:WEB:POR">SYST:COMM:LAN:WEB:POR</span><span class="briefScpi">Sets a Ethernet new port for the Web server</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:WEB:PORt <div class="tooltip" data-id="20">&lt;port&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="20"><span class="param">port</span><span class="paramType">uint</span> <span class="paramDesc">new port number. 0 to disable service. Default it 80.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to change the Ethernet port number of the  Web server. The server allows monitoring device state via web browser. You can use port number 0 to disable the service. Once the port number is changed a reboot of the device is mandatory to apply new server settings.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:SCPI:POR 8080</div>
+        <div class="note">Requires reboot of device.</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:COMM:LAN:WEB:POR?">SYST:COMM:LAN:WEB:POR?</span><span class="briefScpi">Queries Ethernet port for the Web server</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:COMMunicate:LAN:WEB:PORt?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">port</span><span class="paramType">uint</span> <span class="paramDesc">new port number. 0 to disable service. Default it 80.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to query the Ethernet port number of the Web server. The server allows monitoring device state via web browser. For closer details read <a class="linkSCPI" title="Sets a Ethernet new port for the Web server" href="#SYST:COMM:LAN:WEB:POR">SYST:COMM:LAN:WEB:POR</a>.</div>
+        <div class="example">&gt;&gt; SYST:COMM:LAN:WEB:POR?<br />&lt;&lt; 80</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:DATE">SYST:DATE</span><span class="briefScpi">Changes device date</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:DATE <div class="tooltip" data-id="11">&lt;year&gt;</div>,<div class="tooltip" data-id="12">&lt;month&gt;</div>,<div class="tooltip" data-id="13">&lt;day&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="11"><span class="param">year</span><span class="paramType">uint</span> <span class="paramDesc">year</span></li>
+              <li id="12"><span class="param">month</span><span class="paramType">uint</span> <span class="paramDesc">month of year 1 to 12</span></li>
+              <li id="13"><span class="param">day</span><span class="paramType">uint</span> <span class="paramDesc">day of month 2 to 31</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SYST:DATE 2023,3,23</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:DATE?">SYST:DATE?</span><span class="briefScpi">Returns device date</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:DATE?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">year</span><span class="paramType">uint</span> <span class="paramDesc">year</span></li>
+          <li><span class="param">month</span><span class="paramType">uint</span> <span class="paramDesc">month of year 1 to 12</span></li>
+          <li><span class="param">day</span><span class="paramType">uint</span> <span class="paramDesc">day of month 2 to 31</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SYST:DATE?<br />&lt;&lt; 2022,4,13</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:ERR?">SYST:ERR?</span><span class="briefScpi">Reads and removes oldest element of SCPI error queue</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:ERRor[:NEXT]?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">error</span><span class="paramType">int</span> <span class="paramDesc">SPCI error code. If no error occurred result will be 0.</span></li>
+          <li><span class="param">errDesc</span><span class="paramType">string</span> <span class="paramDesc">error code English description text.</span></li>
+        </ul></div>
+
+        <div class="details">Call to test if there where errors during command execution or asynchronous device errors. The device internally uses a error queue to store SCPI errors. This command returns and removes the oldest element of the queue. Call multiple times until queue is empty and function returns 0, "No error". The internal queue length is limited. So if you do not keep the queue empty you might loose errors when queue is full.</div>
+        <div class="example">&gt;&gt; SYST:ERR?<br />&lt;&lt; -113,"Undefined header"</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:ERR:COUN?">SYST:ERR:COUN?</span><span class="briefScpi">Tests how many errors are stored in SCPI error queue</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:ERRor:COUNt?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">errDesc</span><span class="paramType">uint</span> <span class="paramDesc">Amount of errors stored in SCPI error queue. 0 when empty.</span></li>
+        </ul></div>
+
+        <div class="details">For closer details about SCPI error queue read <a class="linkSCPI" title="Reads and removes oldest element of SCPI error queue" href="#SYST:ERR?">SYST:ERR?</a>.</div>
+        <div class="example">&gt;&gt; SYST:ERR:COUN?<br />&lt;&lt; 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:FWD?">SYST:FWD?</span><span class="briefScpi">Forwards a command to the application controller</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:FWD? <div class="tooltip" data-id="3">&lt;remCmd&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="3"><span class="param">remCmd</span><span class="paramType">string</span> <span class="paramDesc">command forwarded to application MCU</span></li>
+        </ul></div>
+
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">code</span><span class="paramType">int</span> <span class="paramDesc">1 in case of success. 0 or negative in case of error.</span></li>
+          <li><span class="param">response</span><span class="paramType">var</span> <span class="paramDesc">variable response of command. Depends on request</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SYST:FWD? "b?"<br />&lt;&lt; 1,0</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:LOADF">SYST:LOADF</span><span class="briefScpi">load factory data</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:LOADFactory</div>
+        <div class="example">&gt;&gt; SYSTem:LOADFactory</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:LOCK">SYST:LOCK</span><span class="briefScpi">Sets GUI lock state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:LOCK <div class="tooltip" data-id="55">&lt;state&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="55"><span class="param">state</span><span class="paramType">uint</span> <span class="paramDesc">0-unlock 1-lock</span></li>
+        </ul></div>
+
+        <div class="details"> // </div>
+        <div class="example">&gt;&gt; SYSTem:LOCK 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:LOCK?">SYST:LOCK?</span><span class="briefScpi">Queries GUI lock state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:LOCK?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">state</span><span class="paramType">uint</span> <span class="paramDesc">0-unlock 1-lock</span></li>
+        </ul></div>
+
+        <div class="details"> //   // </div>
+        <div class="example">&gt;&gt; SYSTem:LOCK?<br />&lt;&lt; 1</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:PASS">SYST:PASS</span><span class="briefScpi">Overwrites the system password used for authentication</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:PASSword <div class="tooltip" data-id="25">&lt;oldPas&gt;</div>, <div class="tooltip" data-id="26">&lt;newPas&gt;</div>, <div class="tooltip" data-id="27">&lt;cryptLAN&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="25"><span class="param">oldPas</span><span class="paramType">string</span> <span class="paramDesc">old ASCII passwort string. Max length is 25. Min length is 5</span></li>
+              <li id="26"><span class="param">newPas</span><span class="paramType">string</span> <span class="paramDesc">new ASCII passwort string. Max length is 25. Min length is 5</span></li>
+              <li id="27"><span class="param">cryptLAN</span><span class="paramType">bool</span> <span class="paramDesc">True if SCPI LAN interface should be crypted</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SYSTem:PASSword "THORlabs", "K4!kes§", 1</div>
+        <div class="note">Default password ist THORlabs</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:PASS?">SYST:PASS?</span><span class="briefScpi">Queries password used for authentication</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:PASSword?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">pass</span><span class="paramType">string</span> <span class="paramDesc">passwort string.</span></li>
+          <li><span class="param">cryptLAN</span><span class="paramType">bool</span> <span class="paramDesc">True if SCPI LAN interface is crypted. False for uncrypted.</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SYSTem:PASSword?<br />&lt;&lt; THORlabs, 0</div>
+        <div class="note">Default password ist THORlabs. Only supported by local serial or USB interface.</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:SER:TRAN:BAUD">SYST:SER:TRAN:BAUD</span><span class="briefScpi">Queries baudrate of RS232 interface</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:SERial:TRANsmit:BAUD <div class="tooltip" data-id="14">&lt;baudrate&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="14"><span class="param">baudrate</span><span class="paramType">uint,MIN,DEF,MAX</span> <span class="paramDesc">RS232 interface baudrate.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to read back the baudrate of the serial RS232 interface. Other configuration is 8-N-1. The following baudrates are supported: <ul class="detailListing"> <li>9600</li> <li>14400</li> <li>19200</li> <li>28800</li> <li>38400</li> <li>57600</li> <li>115200 (default)</li> <li>230400</li> <li>460800</li> <li>921600</li> </ul></div>
+        <div class="example">&gt;&gt; SYST:SER:TRAN:BAUD 9600</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:SER:TRAN:BAUD?">SYST:SER:TRAN:BAUD?</span><span class="briefScpi">Queries baudrate of serial interface</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:SERial:TRANsmit:BAUD? <div class="tooltip" data-id="15">&lt;special&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+           <li id="15"><span class="optParam">special</span><span class="paramType">MIN,MAX,DEF</span> <span class="paramDesc">Optional! Query minimal, default or maximal used baudrate.</span></li>
+        </ul></div>
+
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">baudrate</span><span class="paramType">uint</span> <span class="paramDesc">RS232 interface baudrate</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to read back the baudrate of the serial interface. Other configuration is 8-N-1. For closer details read <a class="linkSCPI" title="Queries baudrate of RS232 interface" href="#SYST:SER:TRAN:BAUD">SYST:SER:TRAN:BAUD</a>.</div>
+        <div class="example">&gt;&gt; SYST:SER:TRAN:BAUD?<br />&lt;&lt; 115200</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:STA:CERR?">SYST:STA:CERR?</span><span class="briefScpi">Reads the compressor error state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:STAte:CompERRor?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">error</span><span class="paramType">uint32</span> <span class="paramDesc">Device compressor error information.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to read back the compressor error information of the device. When a compressor error occurs, the correspond bit is set. <ul class="detailListing"> <li>bit0: Software Over Current</li> <li>bit1: Over Voltage Protection </li> <li>bit2: Under Voltage Protection</li> <li>bit3: Phase Loss Protection</li> <li>bit4: Speed Failure Protection</li> <li>bit5: Hardware Over Current</li> <li>bit6: Phase Current Anomaly</li> <li>bit7: No Com</li> </ul></div>
+        <div class="example">&gt;&gt; SYSTem:STAte:CompERRor?<br />&lt;&lt; 0x0001</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:STA:ERR?">SYST:STA:ERR?</span><span class="briefScpi">Reads the device error state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:STAte:ERRor?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">error</span><span class="paramType">uint32</span> <span class="paramDesc">Device error information.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to read back the error information of the device. When a error occurs, the correspond bit is set. <ul class="detailListing"> <li>bit0: Liquid level is low</li> <li>bit1: Compressor generate error </li> <li>bit2: Pressure error</li> <li>bit3: Flow error</li> <li>bit4: Actual Temperature No Sensor</li> <li>bit5: Actual Temperature is high</li> </ul></div>
+        <div class="example">&gt;&gt; SYSTem:STAte:ERRor?<br />&lt;&lt; 0x0001</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:STA:WARN?">SYST:STA:WARN?</span><span class="briefScpi">Reads the device warning state</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:STAte:WARNing?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">error</span><span class="paramType">uint32</span> <span class="paramDesc">Device error information.</span></li>
+        </ul></div>
+
+        <div class="details">Use this command to read back the warning information of the device. When a warning occurs, the correspond bit is set. <ul class="detailListing"> <li>bit0:  Ambient temperature is high </li> <li>bit1:  Ambient temperature is low</li> <li>bit2:  Ambient temperature No Sensor</li> <li>bit3:  Ambient humidity No Sensor</li> <li>bit4:  Input temperature is high</li> <li>bit5:  Input temperature is low</li> <li>bit6:  Input temperature No Sensor</li> <li>bit7:  Actual temperature is high</li> <li>bit8:  Actual temperature is low</li> <li>bit9:  Heat Sink temperature No Sensor</li> <li>bit10: Actual temperature out high Error Window</li> <li>bit11: Actual temperature out low Error Window</li> <li>bit12: HeatSink temperature is high</li> </ul></div>
+        <div class="example">&gt;&gt; SYSTem:STAte:WARNing?<br />&lt;&lt; 0x0001</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:TIME">SYST:TIME</span><span class="briefScpi">Changes device time</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:TIME <div class="tooltip" data-id="7">&lt;hour&gt;</div>,<div class="tooltip" data-id="8">&lt;minute&gt;</div>,<div class="tooltip" data-id="9">&lt;seconds&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="7"><span class="param">hour</span><span class="paramType">uint</span> <span class="paramDesc">hour of day from 0 to 23</span></li>
+              <li id="8"><span class="param">minute</span><span class="paramType">uint</span> <span class="paramDesc">minutes of hour from 0 to 59</span></li>
+              <li id="9"><span class="param">seconds</span><span class="paramType">uint</span> <span class="paramDesc">seconds of minute from 0 to 59</span></li>
+        </ul></div>
+
+        <div class="details">Call this function to manually adjust the system time. You may also want to use <a class="linkSCPI" title="Synchronize device time with external NTP time server" href="#SYST:TIME:NTP">SYST:TIME:NTP</a> to set date and time by an external time server. If you want to adjust system time because of summer- or wintertime you should use <a class="linkSCPI" title="Changes clock for summer or winter time" href="#SYST:TIME:MODE">SYST:TIME:MODE</a>.</div>
+        <div class="example">&gt;&gt; SYST:DATE 11,34,23</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:TIME?">SYST:TIME?</span><span class="briefScpi">Returns device time</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:TIME?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">hour</span><span class="paramType">uint</span> <span class="paramDesc">hour of day from 0 to 23</span></li>
+          <li><span class="param">minute</span><span class="paramType">uint</span> <span class="paramDesc">minutes of hour from 0 to 59</span></li>
+          <li><span class="param">seconds</span><span class="paramType">uint</span> <span class="paramDesc">seconds of minute from 0 to 59</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SYST:TIME?<br />&lt;&lt; 13,27,17</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:TIME:MODE">SYST:TIME:MODE</span><span class="briefScpi">Changes clock for summer or winter time</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:TIME:MODE <div class="tooltip" data-id="10">&lt;timeMode&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="10"><span class="param">timeMode</span><span class="paramType">SPEC</span> <span class="paramDesc">SUMMER or WINTER for summertime or wintertime.</span></li>
+        </ul></div>
+
+        <div class="details">Call to set summer or winter time without modifying the clock itself. This flag automatically adds an additional hour to the clock during summertime.</div>
+        <div class="example">&gt;&gt; SYST:TIME:MODE SUMMER</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:TIME:MODE?">SYST:TIME:MODE?</span><span class="briefScpi">Tests if clock configured for summer or winter time</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:TIME:MODE?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">timeMode</span><span class="paramType">SPEC</span> <span class="paramDesc">SUMMER or WINTER for summertime or wintertime.</span></li>
+        </ul></div>
+
+        <div class="example">&gt;&gt; SYST:TIME:MODE?<br />&lt;&lt; SUMMER</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:TIME:NTP">SYST:TIME:NTP</span><span class="briefScpi">Synchronize device time with external NTP time server</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:TIME:NTP <div class="tooltip" data-id="5">&lt;timezone&gt;</div>,<div class="tooltip" data-id="4">&lt;isSummertime&gt;</div>,<div class="tooltip" data-id="6">&lt;ipForServer&gt;</div></div>
+        <div class="paramDocu">Parameters<ul>
+              <li id="4"><span class="param">isSummertime</span><span class="paramType">uint</span> <span class="paramDesc">0 for wintertime. 1 for summertime</span></li>
+              <li id="5"><span class="param">timezone</span><span class="paramType">uint</span> <span class="paramDesc">Local time zone offset for GMT. Berlin is +1 Beijing is +8</span></li>
+           <li id="6"><span class="optParam">ipForServer</span><span class="paramType">string</span> <span class="paramDesc">Optional! ip address of used NTP server in format "192.53.103.108". By default PTB server is used.</span></li>
+        </ul></div>
+
+        <div class="details">Call this function to trigger a device time sync with an external NTP (Network time protocol) server. This requires an active Ethernet connection with the route to the requested server.</div>
+        <div class="example">&gt;&gt; SYST:TIME:NTP 0,8</div>
+        <div class="note">The device does not support DNS resolution. So you have to address a fixed IP.</div>
+
+      </div>
+    </div>
+    <div class="noSplit">
+      <div class="collapsible" data-subsystem="SYST">
+        <span class="scpi" id="SYST:VERS?">SYST:VERS?</span><span class="briefScpi">Returns SCPI version string</span>
+
+      </div>
+      <div class="content">
+        <div class="scpiLong">SYSTem:VERSion?</div>
+        <div class="resultDocu">Response<ul>
+          <li><span class="param">vers</span><span class="paramType">string</span> <span class="paramDesc">SCPI version string without quotes. See details for format.</span></li>
+        </ul></div>
+
+        <div class="details">Response format YYYY.V. YYYY is year of SCPI standard. V is the revision of standard.</div>
+        <div class="example">&gt;&gt; SYST:VER?<br />&lt;&lt; 1999.0</div>
+
+      </div>
+    </div>
+
+ 
+  </div>
+  <script>
+    //Add event handler to all SCPI command descriptions to hide or show all commands
+    var coll = document.getElementsByClassName("collapsible");
+    for (let i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", (e) => {
+        let event = e.target || e.currentTarget;
+        //Navigate DOM to collapsible div
+        let content;
+        if(event.nodeName == "SPAN") {
+          content = event.parentElement.nextElementSibling;
+        } else {
+          content = event.nextElementSibling;
+        }
+          
+        //Toggle fold/unfold by maxHeight style attribute
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = content.scrollHeight + "px";
+        } 
+      });
+    }
+
+    //Add event handler to all SCPI cross reference links to ensure link destination is visible
+    var scpiLinks = document.getElementsByClassName("linkSCPI");
+    for(let i = 0; i < scpiLinks.length; i++) {
+      scpiLinks[i].addEventListener("click", (e) => {
+        let event = e.target || e.currentTarget;
+        if(event.hash) {
+          //Get element of id stored in anchor element
+          let destSpan = document.getElementById(event.hash.substring(1));
+          if(destSpan) {
+            //Navigate DOM to collapsible div
+            let destEl = destSpan.parentElement.nextElementSibling;
+            //Ensure to show div if not unfolded already
+            if(destEl && !destEl.style.maxHeight) {
+              destEl.style.maxHeight = destEl.scrollHeight + "px";
+            }
+          }
+        }
+      });
+    }
+    
+    //Add event handlers to show and hide tooltips of SCPI commands
+    var tooltips = document.getElementsByClassName("tooltip");    
+    for (let i = 0; i < tooltips.length; i++) 
+    {
+      tooltips[i].addEventListener("mouseenter", (e) => {
+        let event = e.target || e.currentTarget;
+        document.getElementById(event.getAttribute('data-id')).classList.add("highlightParam");
+      });
+      tooltips[i].addEventListener("mouseleave", (e) => {
+        let event = e.target || e.currentTarget;
+        document.getElementById(event.getAttribute('data-id')).classList.remove("highlightParam");
+      });
+    }
+
+    //Add event handler for SCPI subsystem fold or unfold operation 
+    var unfolder = document.getElementsByClassName("unfoldSection");
+    for (let i = 0; i < unfolder.length; i++) {
+      unfolder[i].addEventListener("click", (e) => {
+        let event = e.target || e.currentTarget;
+        
+        //Should we hide or show all entries?
+        let isFold = event.text.startsWith('Unfold')
+        //Get Subsystem for this event handler
+        let subsystem = event.getAttribute('data-subsystem')
+    
+        //List of all SCPI command containers for given SCPI subsystem
+        var affected = document.querySelectorAll('div[data-subsystem="'+subsystem+'"]');
+    
+        for(let j = 0; j < affected.length; j++) {
+          //Navigate DOM to collapsible div
+          let content = affected[j].nextElementSibling;
+          //Test if we should hide or show all entries.
+          if(isFold) {
+            content.style.maxHeight = null;
+          }
+          else {
+            content.style.maxHeight = content.scrollHeight + "px";
+          }
+    
+          affected[j].click()
+        }
+    
+        //Replace SCPI subsystem unfold/fold link text label
+        if(isFold)
+          event.text = event.text.replace("Unfold", "Fold");
+        else
+          event.text = event.text.replace("Fold", "Unfold");
+      });
+    }
+
+    //Add event handler for global SCPI fold or unfold operation 
+    document.getElementById("foldAll").addEventListener("click", (e) => {
+      let event = e.target || e.currentTarget;
+      //Should we hide or show all entries?
+      let isFold = event.text.startsWith('Unfold');
+        
+      //List of all SCPI command container
+      var affected = document.querySelectorAll('div[data-subsystem]');
+        
+      for(let j = 0; j < affected.length; j++) {
+        //Navigate DOM to collapsible div
+        let content = affected[j].nextElementSibling;
+        //Test if we should hide or show all entries.
+        if(isFold) {
+          content.style.maxHeight = null;
+        }
+        else {
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+
+        affected[j].click()
+      }
+        
+      //Replace global unfold/fold link text label
+      if(isFold)
+        event.text = event.text.replace("Unfold", "Fold");
+      else
+        event.text = event.text.replace("Fold", "Unfold");
+      
+      //Replace all SCPI subsystem fold/unfold text labes
+      otherFolders = document.querySelectorAll('a[data-subsystem]');
+      for(let j = 0; j < otherFolders.length; j++) {
+        if(isFold)
+          otherFolders[j].text = otherFolders[j].text.replace("Unfold", "Fold");
+        else
+          otherFolders[j].text = otherFolders[j].text.replace("Fold", "Unfold");
+      }
+    });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+GetIDN;*IDN?
+SetRunMode1;CONTrol:RUNMode _1
+GetRunMode;CONTrol:RUNMode?
+SetWorkModeCooling;CONTrol:OUTPut:WORKmode _0
+GetWorkMode;CONTrol:OUTPut:WORKmode?
+
+
