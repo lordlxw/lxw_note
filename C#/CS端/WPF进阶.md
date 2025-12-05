@@ -228,7 +228,7 @@ public class RelayCommand : ICommand
 >     <TextBlock>
 >       <Run FontWeight="Bold">Hello, world</Run>
 >     </TextBlock>
->                                 
+>                                   
 >     <TextBlock FontWeight="Bold">
 >       Hello, world
 >     </TextBlock> 
@@ -804,7 +804,45 @@ xmIns:x="http://schemas.microsoft.com/winfx/2006/xaml"Orientation="Horizontal" H
 >
 > 
 
-
+> 2025/11/26
+>
+> 通过代码实现绑定（可以通过基类/抽象类来实现多态）
+>
+> SetBinding方法
+>
+> ```C#
+>  private object _dataContext;
+>  public object DataContext
+>  {
+>      get { return _dataContext; }
+>      set
+>      {
+>          _dataContext = value;
+>          SetContextBinding();
+>      }
+>  }
+> 
+> protected void SetBinding(DependencyProperty property, object source = null, string path = null, BindingMode bindingMode = BindingMode.TwoWay, IValueConverter converter = null)
+> {
+>     var realPath = path ?? property.Name;
+>     var realSource = source ?? this.DataContext;
+>     var bind = new Binding(realPath) { Source = realSource, Mode = bindingMode, Converter = converter };
+>     BindingOperations.SetBinding(this, property, bind);
+> }
+> //上面是基类 
+> 
+> 
+> 
+>         protected override void SetContextBinding()
+>         {
+>             SetBinding(RectProperty);
+>             SetBinding(ImageProperty);
+>         }
+> 
+> //子类
+> ```
+>
+> 
 
 
 
